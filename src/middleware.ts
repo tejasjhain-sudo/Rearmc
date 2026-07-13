@@ -10,10 +10,9 @@ export function middleware(req: NextRequest) {
   // Check if we are on the tierlist subdomain
   const isTierlistSubdomain = hostname.includes('tierlist.rearmc.fun') || hostname.includes('tierlist.localhost');
 
-  // If we are on the tierlist subdomain and trying to access the root path,
-  // rewrite it to the /tierlist route internally.
-  if (isTierlistSubdomain && url.pathname === '/') {
-    return NextResponse.rewrite(new URL('/tierlist', req.url));
+  // If we are on the tierlist subdomain, hard redirect to the main domain /tierlist
+  if (isTierlistSubdomain) {
+    return NextResponse.redirect('https://www.rearmc.fun/tierlist');
   }
 
   // Also, you can optionally redirect if they try to access /tierlist on the main domain

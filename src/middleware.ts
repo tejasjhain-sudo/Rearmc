@@ -2,17 +2,18 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
 export function middleware(req: NextRequest) {
-  const url = req.nextUrl;
-  const hostname = req.headers.get('host') || '';
+  const url = req.nextUrl.clone();
+  
+  // Use x-forwarded-host on Vercel, fallback to host
+  const hostname = req.headers.get('x-forwarded-host') || req.headers.get('host') || '';
 
-  // Check if we are on the tierlist subdomain (either production or local dev)
-  const isTierlistSubdomain = hostname === 'tierlist.rearmc.fun' || hostname.startsWith('tierlist.localhost');
+  // Check if we are on the tierlist subdomain
+  const isTierlistSubdomain = hostname.includes('tierlist.rearmc.fun') || hostname.includes('tierlist.localhost');
 
   // If we are on the tierlist subdomain and trying to access the root path,
   // rewrite it to the /tierlist route internally.
   if (isTierlistSubdomain && url.pathname === '/') {
-    url.pathname = '/tierlist';
-    return NextResponse.rewrite(url);
+    return NextResponse.rewrite(new URL('/tierlist', req.url));
   }
 
   // Also, you can optionally redirect if they try to access /tierlist on the main domain

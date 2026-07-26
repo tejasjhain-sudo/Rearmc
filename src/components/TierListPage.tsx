@@ -118,170 +118,12 @@ function KitCircle({ kit, tier, size = 32 }: { kit: typeof KITS[0]; tier: string
   );
 }
 
-/* ─────────────────────────────────── Steve Sprite ───────────────────── */
-function SteveSprite({ running }: { running?: boolean }) {
-  return (
-    <motion.div
-      className="flex flex-col items-center select-none"
-      animate={running ? { y: [0, -10, 0] } : {}}
-      transition={{ duration: 0.15, repeat: running ? Infinity : 0 }}
-      style={{ imageRendering: "pixelated" }}
-    >
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
-        src="https://minotar.net/armor/body/MHF_Steve/100.png"
-        alt="Steve"
-        style={{ width: 64, height: 96, objectFit: "contain", imageRendering: "pixelated" }}
-      />
-    </motion.div>
-  );
-}
-
-function TNTBlock({ flash }: { flash: boolean }) {
-  return (
-    <motion.div
-      className="rounded-lg flex flex-col items-center justify-center font-black text-white text-xs select-none"
-      style={{ width: 44, height: 44, border: "3px solid #111", background: "#d32f2f", boxShadow: "0 0 25px rgba(211,47,47,0.9)" }}
-      animate={flash ? {
-        background: ["#d32f2f", "#ffffff", "#d32f2f", "#ffffff"],
-        scale: [1, 1.25, 1, 1.3],
-      } : {}}
-      transition={{ duration: 0.12, repeat: flash ? Infinity : 0 }}
-    >
-      <div className="w-full bg-white text-[#d32f2f] text-[9px] text-center font-black py-0.5 tracking-tighter">TNT</div>
-    </motion.div>
-  );
-}
-
-/* ─────────────────────────────────── Steve TNT Intro ────────────────── */
-type IntroPhase = "run" | "plant" | "flash" | "explode" | "done";
-
-function SteveTNTIntro({ onDone }: { onDone: () => void }) {
-  const [phase, setPhase] = useState<IntroPhase>("run");
-
-  useEffect(() => {
-    const t1 = setTimeout(() => setPhase("plant"), 200);
-    const t2 = setTimeout(() => setPhase("flash"), 400);
-    const t3 = setTimeout(() => setPhase("explode"), 650);
-    const t4 = setTimeout(() => { setPhase("done"); onDone(); }, 950);
-    return () => [t1, t2, t3, t4].forEach(clearTimeout);
-  }, [onDone]);
-
-  const EXPLOSION_PARTICLES = Array.from({ length: 36 }, (_, i) => {
-    const angle = (i / 36) * 360;
-    const dist = 90 + (i % 5) * 35;
-    const size = 6 + (i % 4) * 4;
-    const color = ["#ff4400","#ff8800","#ffcc00","#ffffff","#ff2222","#ffee00"][i % 6];
-    return { id: i, angle, dist, size, color };
-  });
-
-  if (phase === "done") return null;
-
-  return (
-    <motion.div
-      className="absolute inset-0 z-30 flex items-end justify-center overflow-hidden rounded-3xl pointer-events-none"
-      style={{ background: "rgba(5,5,8,0.95)" }}
-      exit={{ opacity: 0 }}
-      transition={{ duration: 0.2 }}
-    >
-      {/* Ground */}
-      <div className="absolute bottom-0 inset-x-0 h-14" style={{
-        background: "repeating-linear-gradient(90deg, #3a2810 0px, #3a2810 16px, #2a1a08 16px, #2a1a08 32px)",
-        borderTop: "3px solid #5a3818",
-      }} />
-
-      {/* Steve running → planting */}
-      <div className="absolute bottom-12 flex items-end gap-3" style={{ zIndex: 2 }}>
-        <AnimatePresence mode="wait">
-          {phase === "run" && (
-            <motion.div
-              key="steve-run"
-              initial={{ x: 260, opacity: 1 }}
-              animate={{ x: 0 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.2, ease: "easeOut" }}
-            >
-              <SteveSprite running />
-            </motion.div>
-          )}
-          {(phase === "plant" || phase === "flash") && (
-            <motion.div key="steve-plant" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex items-end gap-2">
-              <SteveSprite />
-              <motion.div
-                initial={{ y: -40, scale: 0.5 }}
-                animate={{ y: 0, scale: 1 }}
-                transition={{ type: "spring", stiffness: 400, damping: 15 }}
-              >
-                <TNTBlock flash={phase === "flash"} />
-              </motion.div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </div>
-
-      {/* Steve runs away when flash starts */}
-      <AnimatePresence>
-        {phase === "flash" && (
-          <motion.div
-            key="steve-flee"
-            className="absolute bottom-12 z-10"
-            initial={{ x: 0 }}
-            animate={{ x: -300 }}
-            transition={{ duration: 0.25, ease: "easeIn" }}
-          >
-            <SteveSprite running />
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* Explosion */}
-      <AnimatePresence>
-        {phase === "explode" && (
-          <div className="absolute inset-0 flex items-center justify-center" style={{ zIndex: 10 }}>
-            {/* Flash white screen blast */}
-            <motion.div
-              className="absolute inset-0"
-              initial={{ opacity: 1 }}
-              animate={{ opacity: [1, 0] }}
-              transition={{ duration: 0.3 }}
-              style={{ background: "#ffffff" }}
-            />
-            {/* Boom text */}
-            <motion.div
-              className="text-6xl font-black text-amber-400 drop-shadow-[0_0_20px_rgba(255,100,0,1)] absolute z-20"
-              initial={{ scale: 0.3, opacity: 1 }}
-              animate={{ scale: [0.3, 2.2, 2.5], opacity: [1, 1, 0] }}
-              transition={{ duration: 0.35, ease: "easeOut" }}
-            >BOOM! 💥</motion.div>
-            {/* Particles */}
-            {EXPLOSION_PARTICLES.map(p => (
-              <motion.div
-                key={p.id}
-                className="absolute rounded-sm"
-                style={{ width: p.size, height: p.size, background: p.color, boxShadow: `0 0 ${p.size * 2}px ${p.color}` }}
-                initial={{ x: 0, y: 0, opacity: 1, scale: 1.2 }}
-                animate={{
-                  x: Math.cos((p.angle * Math.PI) / 180) * p.dist,
-                  y: Math.sin((p.angle * Math.PI) / 180) * p.dist,
-                  opacity: 0, scale: 0,
-                }}
-                transition={{ duration: 0.35, ease: "easeOut" }}
-              />
-            ))}
-          </div>
-        )}
-      </AnimatePresence>
-    </motion.div>
-  );
-}
-
 /* ─────────────────────────────────── Profile Card ───────────────────── */
 function ProfileCard({ name, stats, rank, onClose }: {
   name: string; stats: PlayerData; rank: number; onClose: () => void;
 }) {
   const score = calcScore(stats);
   const ratedKits = KITS.filter(k => stats[k.key] !== null);
-  const [introOver, setIntroOver] = useState(false);
 
   useEffect(() => {
     const fn = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
@@ -292,112 +134,173 @@ function ProfileCard({ name, stats, rank, onClose }: {
   return (
     <motion.div
       className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4"
-      style={{ background: "rgba(0,0,0,0.92)", backdropFilter: "blur(14px)" }}
-      initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+      style={{ background: "rgba(0,0,0,0.85)", backdropFilter: "blur(8px)" }}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
       onClick={(e) => { if (e.currentTarget === e.target) onClose(); }}
     >
+      {/* Minecraft Container GUI Frame */}
       <motion.div
-        initial={{ scale: 0.8, opacity: 0 }}
+        initial={{ scale: 0.85, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         exit={{ scale: 0.85, opacity: 0 }}
-        transition={{ type: "spring", stiffness: 320, damping: 28 }}
+        transition={{ type: "spring", stiffness: 400, damping: 25 }}
         onClick={e => e.stopPropagation()}
-        className="relative w-full max-w-[340px] rounded-3xl overflow-hidden"
+        className="relative w-full max-w-[360px] p-4 select-none"
         style={{
-          background: "linear-gradient(180deg,#0c0c0e 0%,#080810 100%)",
-          border: "1px solid rgba(255,80,0,0.2)",
-          boxShadow: "0 40px 100px rgba(0,0,0,0.98), 0 0 40px rgba(255,60,0,0.1)",
-          minHeight: 340,
+          background: "#c6c6c6",
+          boxShadow: "inset -4px -4px 0 #373737, inset 4px 4px 0 #ffffff, 0 25px 60px rgba(0,0,0,0.9)",
+          border: "4px solid #1f1f1f",
         }}
       >
-        {/* Steve TNT Intro overlay */}
-        <AnimatePresence>
-          {!introOver && <SteveTNTIntro onDone={() => setIntroOver(true)} />}
-        </AnimatePresence>
+        {/* Header Bar */}
+        <div className="flex items-center justify-between mb-3 px-1">
+          <div className="flex items-center gap-1.5">
+            <span className="text-xs font-black text-[#404040] uppercase tracking-wider font-mono">
+              🗡️ PLAYER PROFILE
+            </span>
+          </div>
+          {/* Minecraft X Button */}
+          <button
+            onClick={onClose}
+            className="w-6 h-6 flex items-center justify-center text-xs font-black text-[#373737] hover:text-red-600 transition-colors"
+            style={{
+              background: "#c6c6c6",
+              boxShadow: "inset 2px 2px 0 #ffffff, inset -2px -2px 0 #555555",
+            }}
+          >
+            ✕
+          </button>
+        </div>
 
-        {/* Red crack lines top */}
-        <div className="absolute inset-x-0 top-0 h-0.5 pointer-events-none"
-          style={{ background: "linear-gradient(90deg,transparent,#ff3300,#ff6600,#ff3300,transparent)" }} />
-
-        {/* Subtle ember glow */}
-        <div className="absolute inset-x-0 top-0 h-32 pointer-events-none"
-          style={{ background: "radial-gradient(ellipse at 50% 0%, rgba(255,60,0,0.08) 0%, transparent 70%)" }} />
-
-        {/* close */}
-        <button onClick={onClose}
-          className="absolute top-4 right-4 z-20 w-8 h-8 rounded-full flex items-center justify-center transition-all hover:scale-110 hover:bg-red-900/40"
-          style={{ background: "rgba(255,255,255,0.07)", border: "1px solid rgba(255,255,255,0.12)" }}
+        {/* Inner Dark Slot Container Area */}
+        <div
+          className="p-4 flex flex-col items-center gap-4"
+          style={{
+            background: "#1e1e1e",
+            boxShadow: "inset 3px 3px 0 #000000, inset -3px -3px 0 #555555",
+          }}
         >
-          <X size={14} className="text-gray-400" />
-        </button>
-
-        <div className="relative z-10 flex flex-col items-center px-6 pt-8 pb-7 gap-4">
-
-          {/* Avatar */}
-          <div className="relative">
-            <div className="w-24 h-24 rounded-2xl overflow-hidden"
-              style={{ boxShadow: "0 0 0 2px rgba(255,60,0,0.4), 0 0 30px rgba(255,60,0,0.2)", background: "#111" }}
+          {/* Top Section: Avatar Slot + Player Info */}
+          <div className="w-full flex items-center gap-4">
+            {/* Minecraft Head Slot (recessed slot) */}
+            <div
+              className="w-20 h-20 shrink-0 p-1 flex items-center justify-center relative"
+              style={{
+                background: "#8b8b8b",
+                boxShadow: "inset 3px 3px 0 #373737, inset -3px -3px 0 #ffffff",
+              }}
             >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={`https://minotar.net/helm/${name}/96.png`} alt={name}
-                className="w-full h-full object-cover" style={{ imageRendering: "pixelated" }}
-                onError={e => { (e.target as HTMLImageElement).src = fallbackSrc(96); }}
-              />
-            </div>
-            {/* Explosion mark */}
-            <motion.div className="absolute -bottom-1 -right-1 text-base"
-              animate={{ scale: [1, 1.2, 1] }} transition={{ duration: 1.5, repeat: Infinity }}
-            >💥</motion.div>
-          </div>
-
-          {/* Name */}
-          <div className="text-center">
-            <h2 className="text-[22px] font-black tracking-tight text-white">{name}</h2>
-            <div className="text-xs font-bold mt-0.5 tracking-widest uppercase" style={{ color: "#ff5500" }}>⚡ RearMC Player</div>
-          </div>
-
-          {/* NameMC */}
-          <a href={`https://namemc.com/profile/${name}`} target="_blank" rel="noopener noreferrer"
-            className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm text-gray-300 hover:text-white transition-all hover:scale-105"
-            style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.08)" }}>
-            <div className="w-5 h-5 rounded bg-[#3C8527] flex items-center justify-center text-white text-[11px] font-black">N</div>
-            NameMC <ExternalLink size={11} className="text-gray-500" />
-          </a>
-
-          <div className="w-full h-px" style={{ background: "linear-gradient(90deg,transparent,rgba(255,80,0,0.35),transparent)" }} />
-
-          {/* Position */}
-          <div className="w-full">
-            <p className="text-[10px] font-extrabold uppercase tracking-[0.15em] text-gray-600 mb-2">Position</p>
-            <div className="flex items-center gap-3 px-4 py-3 rounded-xl"
-              style={{ background: "rgba(255,60,0,0.07)", border: "1px solid rgba(255,60,0,0.18)" }}>
-              <div className="h-8 px-3 rounded-lg flex items-center justify-center font-extrabold text-base text-white"
-                style={{ background: "linear-gradient(135deg,#cc2200,#ff5500)", minWidth: 44 }}>
-                {rank}.
+              <div
+                className="w-full h-full"
+                style={{
+                  background: "#181818",
+                  boxShadow: "inset 2px 2px 0 #000000, inset -2px -2px 0 #555555",
+                }}
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={`https://minotar.net/helm/${name}/64.png`}
+                  alt={name}
+                  className="w-full h-full object-cover"
+                  style={{ imageRendering: "pixelated" }}
+                  onError={e => { (e.target as HTMLImageElement).src = fallbackSrc(64); }}
+                />
               </div>
-              <span className="text-base">🏆</span>
-              <span className="text-white font-bold text-sm uppercase">Overall</span>
-              <div className="ml-auto font-bold text-sm" style={{ color: "#ff5500" }}>{score} pts</div>
+            </div>
+
+            {/* Name + Details */}
+            <div className="flex-1 min-w-0">
+              <h2 className="text-xl font-extrabold text-white truncate tracking-wide drop-shadow-[2px_2px_0_#000]">
+                {name}
+              </h2>
+              <div className="inline-block mt-1 px-2 py-0.5 text-[10px] font-black uppercase text-amber-300 bg-amber-950/60 border border-amber-500/40">
+                ⭐ RearMC Master
+              </div>
+              <div className="mt-2">
+                <a
+                  href={`https://namemc.com/profile/${name}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 px-2.5 py-1 text-[11px] font-bold text-gray-200 hover:text-white transition-all"
+                  style={{
+                    background: "#555555",
+                    boxShadow: "inset 2px 2px 0 #aaaaaa, inset -2px -2px 0 #222222",
+                  }}
+                >
+                  <span>NameMC</span>
+                  <ExternalLink size={10} />
+                </a>
+              </div>
             </div>
           </div>
 
-          {/* Tiers */}
+          {/* Overall Points Bar (GUI Slot Style) */}
+          <div
+            className="w-full p-2.5 flex items-center justify-between"
+            style={{
+              background: "#2a2a2a",
+              boxShadow: "inset 2px 2px 0 #000000, inset -2px -2px 0 #444444",
+            }}
+          >
+            <div className="flex items-center gap-2">
+              <div
+                className="px-2 py-0.5 font-black text-sm text-black"
+                style={{ background: "#ffaa00", boxShadow: "inset 1px 1px 0 #fff, inset -1px -1px 0 #996600" }}
+              >
+                #{rank}
+              </div>
+              <span className="text-xs font-bold text-gray-200">Overall Ranking</span>
+            </div>
+            <div className="text-right">
+              <span className="font-extrabold text-amber-400 text-sm">{score}</span>
+              <span className="text-[10px] text-gray-400 font-bold ml-1">PTS</span>
+            </div>
+          </div>
+
+          {/* Rated Kit Slots Grid (Authentic 3D Inventory Item Slots) */}
           {ratedKits.length > 0 && (
             <div className="w-full">
-              <p className="text-[10px] font-extrabold uppercase tracking-[0.15em] text-gray-600 mb-3">Tiers</p>
-              <div className="flex flex-wrap gap-3 p-4 rounded-2xl"
-                style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.07)" }}>
-                {ratedKits.map(kit => (
-                  <KitCircle key={kit.key} kit={kit} tier={stats[kit.key]!} size={40} />
-                ))}
+              <p className="text-[10px] font-black uppercase tracking-wider text-gray-400 mb-1.5 pl-0.5">
+                EQUIPPED TIERS ({ratedKits.length})
+              </p>
+              <div
+                className="grid grid-cols-4 gap-2 p-2.5"
+                style={{
+                  background: "#8b8b8b",
+                  boxShadow: "inset 3px 3px 0 #373737, inset -3px -3px 0 #ffffff",
+                }}
+              >
+                {ratedKits.map(kit => {
+                  const tier = stats[kit.key]!;
+                  const tierColor = TIER_COLOR[tier] ?? "#fff";
+                  return (
+                    <div
+                      key={kit.key}
+                      className="aspect-square flex flex-col items-center justify-center relative group p-1"
+                      style={{
+                        background: "#8b8b8b",
+                        boxShadow: "inset 2px 2px 0 #373737, inset -2px -2px 0 #ffffff",
+                      }}
+                    >
+                      <div
+                        className="w-full h-full flex flex-col items-center justify-center relative p-0.5"
+                        style={{
+                          background: "#8b8b8b",
+                          boxShadow: "inset -2px -2px 0 #373737, inset 2px 2px 0 #ffffff",
+                        }}
+                      >
+                        <KitCircle kit={kit} tier={tier} size={28} />
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
             </div>
           )}
-        </div>
 
-        {/* Bottom line */}
-        <div className="absolute inset-x-0 bottom-0 h-0.5"
-          style={{ background: "linear-gradient(90deg,transparent,#ff3300,#ff6600,#ff3300,transparent)" }} />
+        </div>
       </motion.div>
     </motion.div>
   );

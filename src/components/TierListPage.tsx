@@ -20,7 +20,7 @@ type ApiResponse = Record<string, PlayerRecord>;
 const API_URL = "/api/tiers";
 
 const TIER_POINTS: Record<string, number> = {
-  HT1: 100, LT1: 80, HT2: 65, LT2: 55, HT3: 45, LT3: 38, HT4: 30, LT4: 22, HT5: 15, LT5: 10,
+  HT1: 60, LT1: 45, HT2: 30, LT2: 20, HT3: 10, LT3: 6, HT4: 4, LT4: 3, HT5: 2, LT5: 1,
 };
 const TIER_COLOR: Record<string, string> = {
   HT1: "#FFD700", LT1: "#f0c040",
@@ -586,9 +586,22 @@ function LbRow({ rank, name, record, onClick }: {
   );
 }
 
+interface ColumnSubtierData {
+  tier: string;
+  players: { name: string; score: number }[];
+}
+
+interface ColumnData {
+  label: string;
+  color: string;
+  hdrBg: string;
+  totalPlayers: number;
+  subtiers: ColumnSubtierData[];
+}
+
 /* ─────────────────────────────────── Column (Category view) ─────────── */
-function TierColumn({ col, players, idx, onPlayerClick }: {
-  col: typeof TIER_COLS[0]; players: string[]; idx: number;
+function TierColumn({ col, idx, onPlayerClick }: {
+  col: ColumnData; idx: number;
   onPlayerClick: (name: string) => void;
 }) {
   return (
@@ -596,7 +609,7 @@ function TierColumn({ col, players, idx, onPlayerClick }: {
       initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: idx * 0.07 }}
-      className="flex flex-col min-w-[185px] flex-1 rounded-2xl overflow-hidden"
+      className="flex flex-col min-w-[200px] flex-1 rounded-2xl overflow-hidden"
       style={{ border: "1px solid rgba(255,255,255,0.08)" }}
     >
       {/* Header */}
@@ -604,41 +617,61 @@ function TierColumn({ col, players, idx, onPlayerClick }: {
         <span className="text-lg leading-none">🏆</span>
         <span className="font-bold text-[15px]" style={{ color: col.color }}>{col.label}</span>
         <span className="ml-auto text-xs font-bold px-2 py-0.5 rounded-full"
-          style={{ background: `${col.color}22`, color: col.color }}>{players.length}</span>
+          style={{ background: `${col.color}22`, color: col.color }}>{col.totalPlayers}</span>
       </div>
       <div className="h-px" style={{ background: "rgba(255,255,255,0.08)" }} />
 
-      {/* Player rows */}
-      <div className="flex-1 bg-[#0d0d0d] p-2 space-y-0.5">
-        {players.length === 0
-          ? <p className="text-center text-gray-700 text-xs py-4 italic">Empty</p>
-          : players.map((p, i) => (
-            <motion.button
-              key={p}
-              initial={{ opacity: 0, y: 4 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.025 }}
-              whileHover={{ scale: 1.03, x: 3 }}
-              whileTap={{ scale: 0.97 }}
-              onClick={() => onPlayerClick(p)}
-              className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg hover:bg-white/8 transition-colors group text-left"
-            >
-              <div className="w-8 h-8 rounded shrink-0 overflow-hidden bg-[#181818] ring-1 ring-white/10 group-hover:ring-white/30 transition-colors">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={`https://minotar.net/helm/${p}/32.png`} alt={p}
-                  className="w-full h-full object-cover"
-                  onError={e => { (e.target as HTMLImageElement).src = fallbackSrc(32); }}
-                />
+      {/* Player rows grouped by subtier */}
+      <div className="flex-1 bg-[#0d0d0d] p-2 space-y-3">
+        {col.subtiers.map((sub) => {
+          if (sub.players.length === 0) return null;
+          const tierColor = TIER_COLOR[sub.tier] ?? "#aaa";
+          const isHigh = sub.tier.startsWith("HT");
+          return (
+            <div key={sub.tier} className="space-y-1">
+              {/* Sub-tier Header */}
+              <div className="flex items-center justify-between px-2 py-1 rounded bg-white/[0.04] border border-white/5">
+                <span className="text-[10px] font-black tracking-wider uppercase flex items-center gap-1.5" style={{ color: tierColor }}>
+                  <span className="w-1.5 h-1.5 rounded-full" style={{ background: tierColor }} />
+                  {isHigh ? "HIGH TIER" : "LOW TIER"} ({sub.tier})
+                </span>
+                <span className="text-[9px] font-bold text-gray-500">{sub.players.length}</span>
               </div>
-              <span className="text-sm font-medium text-gray-300 group-hover:text-white transition-colors truncate flex-1">{p}</span>
-              {/* MCTiers chevrons */}
-              <div className="opacity-0 group-hover:opacity-100 transition-opacity flex gap-0.5 flex-shrink-0">
-                <svg width="10" height="10" viewBox="0 0 10 10"><path d="M2 2l3 3-3 3M5 2l3 3-3 3" stroke="#9ca3af" strokeWidth="1.5" fill="none" strokeLinecap="round"/></svg>
+
+              {/* Players in this subtier */}
+              <div className="space-y-0.5">
+                {sub.players.map(({ name: p, score }, i) => (
+                  <motion.button
+                    key={p}
+                    initial={{ opacity: 0, y: 4 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: i * 0.025 }}
+                    whileHover={{ scale: 1.03, x: 3 }}
+                    whileTap={{ scale: 0.97 }}
+                    onClick={() => onPlayerClick(p)}
+                    className="w-full flex items-center gap-2 px-2.5 py-1.5 rounded-lg hover:bg-white/8 transition-colors group text-left"
+                  >
+                    <div className="w-7 h-7 rounded shrink-0 overflow-hidden bg-[#181818] ring-1 ring-white/10 group-hover:ring-white/30 transition-colors">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={`https://minotar.net/helm/${p}/32.png`} alt={p}
+                        className="w-full h-full object-cover"
+                        onError={e => { (e.target as HTMLImageElement).src = fallbackSrc(32); }}
+                      />
+                    </div>
+                    <span className="text-xs font-semibold text-gray-300 group-hover:text-white transition-colors truncate flex-1">{p}</span>
+                    
+                    {/* Sub-tier Badge */}
+                    <span className="text-[9px] font-extrabold px-1.5 py-0.5 rounded shrink-0 font-mono"
+                          style={{ background: `${tierColor}20`, color: tierColor, border: `1px solid ${tierColor}40` }}>
+                      {sub.tier}
+                    </span>
+                  </motion.button>
+                ))}
               </div>
-            </motion.button>
-          ))
-        }
+            </div>
+          );
+        })}
       </div>
     </motion.div>
   );
@@ -678,28 +711,58 @@ export default function TierListPage() {
     return () => { if (intervalRef.current) clearInterval(intervalRef.current); };
   }, [fetchData]);
 
+  /* Leaderboard helper for highest individual tier index */
+  const getBestTierIndex = (stats: PlayerData) => {
+    let best = 999;
+    Object.values(stats).forEach(t => {
+      if (t) {
+        const idx = TIER_ORDER.indexOf(t);
+        if (idx !== -1 && idx < best) best = idx;
+      }
+    });
+    return best;
+  };
+
   /* Leaderboard */
   const leaderboard = data
     ? Object.entries(data)
         .map(([name, record]) => ({ name, record, score: calcScore(record.tiers) }))
-        .sort((a, b) => b.score - a.score)
+        .sort((a, b) => {
+          if (b.score !== a.score) return b.score - a.score;
+          const bestA = getBestTierIndex(a.record.tiers);
+          const bestB = getBestTierIndex(b.record.tiers);
+          if (bestA !== bestB) return bestA - bestB;
+          return a.name.localeCompare(b.name);
+        })
         .filter(({ name }) => !search || name.toLowerCase().includes(search.toLowerCase()))
     : [];
 
   /* Category columns */
-  function buildCols(cat: Category) {
+  function buildCols(cat: Category): ColumnData[] {
     if (!data) return [];
     return TIER_COLS.map(col => {
-      const players: string[] = [];
-      col.tiers.forEach(tier => {
+      let totalPlayers = 0;
+      const subtiers = col.tiers.map(tier => {
+        const matching: { name: string; score: number }[] = [];
         Object.entries(data).forEach(([n, record]) => {
-          if (record.tiers[cat as keyof PlayerData] === tier && (!search || n.toLowerCase().includes(search.toLowerCase())))
-            players.push(n);
+          if (record.tiers[cat as keyof PlayerData] === tier && (!search || n.toLowerCase().includes(search.toLowerCase()))) {
+            matching.push({ name: n, score: calcScore(record.tiers) });
+          }
         });
+        // Sort matching players by total score descending, then by username alphabetically
+        matching.sort((a, b) => b.score !== a.score ? b.score - a.score : a.name.localeCompare(b.name));
+        totalPlayers += matching.length;
+        return { tier, players: matching };
       });
-      players.sort();
-      return { ...col, players };
-    }).filter(col => col.players.length > 0);
+
+      return {
+        label: col.label,
+        color: col.color,
+        hdrBg: col.hdrBg,
+        totalPlayers,
+        subtiers,
+      };
+    }).filter(col => col.totalPlayers > 0);
   }
 
   const playerRank = selected && data
@@ -860,7 +923,7 @@ export default function TierListPage() {
                 return (
                   <div className="flex gap-3 overflow-x-auto pb-4" style={{ alignItems: "flex-start" }}>
                     {cols.map((col, i) => (
-                      <TierColumn key={col.label} col={col} players={col.players} idx={i} onPlayerClick={setSelected} />
+                      <TierColumn key={col.label} col={col} idx={i} onPlayerClick={setSelected} />
                     ))}
                   </div>
                 );

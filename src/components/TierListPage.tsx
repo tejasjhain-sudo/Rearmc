@@ -118,12 +118,213 @@ function KitCircle({ kit, tier, size = 32 }: { kit: typeof KITS[0]; tier: string
   );
 }
 
+/* ─────────────────────────────────── Steve Sprite ───────────────────── */
+function SteveSprite({ running }: { running?: boolean }) {
+  return (
+    <motion.div
+      className="flex flex-col items-center select-none"
+      animate={running ? { y: [0, -6, 0] } : {}}
+      transition={{ duration: 0.35, repeat: running ? Infinity : 0 }}
+      style={{ imageRendering: "pixelated" }}
+    >
+      {/* Head */}
+      <div style={{ width: 36, height: 36, background: "#c89c7c", border: "3px solid #7a5c3a", position: "relative", boxShadow: "inset -4px -4px 0 #a07850" }}>
+        <div style={{ position: "absolute", top: 10, left: 5, width: 8, height: 8, background: "#fff" }} />
+        <div style={{ position: "absolute", top: 10, right: 5, width: 8, height: 8, background: "#fff" }} />
+        <div style={{ position: "absolute", top: 12, left: 7, width: 4, height: 5, background: "#224488" }} />
+        <div style={{ position: "absolute", top: 12, right: 7, width: 4, height: 5, background: "#224488" }} />
+        <div style={{ position: "absolute", bottom: 6, left: 8, right: 8, height: 3, background: "#7a3a2a" }} />
+      </div>
+      {/* Body */}
+      <div style={{ width: 40, height: 44, background: "#5577aa", border: "3px solid #334488", boxShadow: "inset -4px -4px 0 #334488" }} />
+      {/* Legs */}
+      <div style={{ display: "flex" }}>
+        <motion.div
+          style={{ width: 18, height: 28, background: "#335599", border: "2px solid #224488", boxShadow: "inset -2px -2px 0 #224488" }}
+          animate={running ? { rotate: [-18, 18] } : {}}
+          transition={{ duration: 0.35, repeat: running ? Infinity : 0, repeatType: "reverse" }}
+        />
+        <motion.div
+          style={{ width: 18, height: 28, background: "#335599", border: "2px solid #224488", boxShadow: "inset -2px -2px 0 #224488" }}
+          animate={running ? { rotate: [18, -18] } : {}}
+          transition={{ duration: 0.35, repeat: running ? Infinity : 0, repeatType: "reverse" }}
+        />
+      </div>
+    </motion.div>
+  );
+}
+
+function TNTBlock({ flash }: { flash: boolean }) {
+  return (
+    <motion.div
+      style={{ width: 38, height: 38, position: "relative", border: "3px solid #333", boxShadow: "0 0 20px rgba(255,60,0,0.8)" }}
+      animate={flash ? {
+        background: ["#cc1100", "#ffffff", "#cc1100", "#ffffff", "#cc1100"],
+        boxShadow: ["0 0 20px rgba(255,60,0,0.8)", "0 0 60px rgba(255,200,0,1)", "0 0 20px rgba(255,60,0,0.8)"],
+      } : { background: "#cc1100" }}
+      transition={{ duration: 0.25, repeat: flash ? Infinity : 0 }}
+    >
+      <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: "40%", background: "#fff", display: "flex", alignItems: "center", justifyContent: "center" }}>
+        <span style={{ fontSize: 8, fontWeight: 900, color: "#cc1100", letterSpacing: 1 }}>TNT</span>
+      </div>
+      <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: "25%", background: "#fff" }} />
+      <div style={{ position: "absolute", inset: "40% 0 25%", background: "#cc1100" }} />
+    </motion.div>
+  );
+}
+
+/* ─────────────────────────────────── Steve TNT Intro ────────────────── */
+type IntroPhase = "run" | "plant" | "flash" | "explode" | "done";
+
+function SteveTNTIntro({ onDone }: { onDone: () => void }) {
+  const [phase, setPhase] = useState<IntroPhase>("run");
+
+  useEffect(() => {
+    const t1 = setTimeout(() => setPhase("plant"), 1100);
+    const t2 = setTimeout(() => setPhase("flash"), 1700);
+    const t3 = setTimeout(() => setPhase("explode"), 2500);
+    const t4 = setTimeout(() => { setPhase("done"); onDone(); }, 3300);
+    return () => [t1, t2, t3, t4].forEach(clearTimeout);
+  }, [onDone]);
+
+  const EXPLOSION_PARTICLES = Array.from({ length: 32 }, (_, i) => {
+    const angle = (i / 32) * 360;
+    const dist = 70 + (i % 5) * 30;
+    const size = 5 + (i % 4) * 4;
+    const color = ["#ff4400","#ff8800","#ffcc00","#ffffff","#ff2222","#ffee00"][i % 6];
+    return { id: i, angle, dist, size, color };
+  });
+
+  if (phase === "done") return null;
+
+  return (
+    <motion.div
+      className="absolute inset-0 z-30 flex items-end justify-center overflow-hidden rounded-3xl"
+      style={{ background: "linear-gradient(180deg, #050508 0%, #0a0005 100%)" }}
+      exit={{ opacity: 0, scale: 1.1 }}
+      transition={{ duration: 0.3 }}
+    >
+      {/* Scan-line overlay */}
+      <div className="absolute inset-0 pointer-events-none" style={{
+        backgroundImage: "repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,0,0,0.15) 3px, rgba(0,0,0,0.15) 4px)",
+        zIndex: 1,
+      }} />
+
+      {/* Ground */}
+      <div className="absolute bottom-0 inset-x-0 h-16" style={{
+        background: "repeating-linear-gradient(90deg, #3a2810 0px, #3a2810 16px, #2a1a08 16px, #2a1a08 32px)",
+        borderTop: "3px solid #5a3818",
+      }} />
+
+      {/* Steve running → planting */}
+      <div className="absolute bottom-14 flex items-end gap-3" style={{ zIndex: 2 }}>
+        <AnimatePresence mode="wait">
+          {phase === "run" && (
+            <motion.div
+              key="steve-run"
+              initial={{ x: 320, opacity: 1 }}
+              animate={{ x: 0 }}
+              exit={{ opacity: 0 }}
+              transition={{ type: "spring", stiffness: 90, damping: 20 }}
+            >
+              <SteveSprite running />
+            </motion.div>
+          )}
+          {(phase === "plant" || phase === "flash") && (
+            <motion.div key="steve-plant" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex items-end gap-2">
+              <SteveSprite />
+              <motion.div
+                initial={{ y: -30, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ type: "spring", stiffness: 300 }}
+              >
+                <TNTBlock flash={phase === "flash"} />
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+
+      {/* Steve runs away when flash starts */}
+      <AnimatePresence>
+        {phase === "flash" && (
+          <motion.div
+            key="steve-flee"
+            className="absolute bottom-14 z-10"
+            initial={{ x: 0 }}
+            animate={{ x: -400 }}
+            transition={{ duration: 0.6, ease: "easeIn" }}
+          >
+            <SteveSprite running />
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Explosion */}
+      <AnimatePresence>
+        {phase === "explode" && (
+          <div className="absolute inset-0 flex items-center justify-center" style={{ zIndex: 3 }}>
+            {/* Flash white */}
+            <motion.div
+              className="absolute inset-0"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: [0, 1, 0] }}
+              transition={{ duration: 0.25 }}
+              style={{ background: "#fff" }}
+            />
+            {/* Boom emoji */}
+            <motion.div
+              className="text-[80px] absolute z-10"
+              initial={{ scale: 0, opacity: 1 }}
+              animate={{ scale: [0, 2, 2.5], opacity: [1, 1, 0] }}
+              transition={{ duration: 0.7, ease: "easeOut" }}
+            >💥</motion.div>
+            {/* Particles */}
+            {EXPLOSION_PARTICLES.map(p => (
+              <motion.div
+                key={p.id}
+                className="absolute rounded-sm"
+                style={{ width: p.size, height: p.size, background: p.color, boxShadow: `0 0 ${p.size}px ${p.color}` }}
+                initial={{ x: 0, y: 0, opacity: 1, scale: 1 }}
+                animate={{
+                  x: Math.cos((p.angle * Math.PI) / 180) * p.dist,
+                  y: Math.sin((p.angle * Math.PI) / 180) * p.dist,
+                  opacity: 0, scale: 0,
+                }}
+                transition={{ duration: 0.7, ease: "easeOut" }}
+              />
+            ))}
+            {/* Smoke */}
+            {[0,1,2,3,4].map(i => (
+              <motion.div key={`smoke-${i}`}
+                className="absolute rounded-full"
+                style={{ width: 20 + i * 10, height: 20 + i * 10, background: "rgba(80,80,80,0.6)" }}
+                initial={{ scale: 0, y: 0, opacity: 0.8 }}
+                animate={{ scale: 3 + i, y: -80 - i * 20, opacity: 0 }}
+                transition={{ duration: 0.8, delay: i * 0.06 }}
+              />
+            ))}
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* Eerie red light ambient */}
+      <motion.div className="absolute inset-0 pointer-events-none"
+        animate={{ opacity: [0.04, 0.12, 0.04] }}
+        transition={{ duration: 1.5, repeat: Infinity }}
+        style={{ background: "radial-gradient(ellipse at center, rgba(255,40,0,0.3) 0%, transparent 70%)" }}
+      />
+    </motion.div>
+  );
+}
+
 /* ─────────────────────────────────── Profile Card ───────────────────── */
 function ProfileCard({ name, stats, rank, onClose }: {
   name: string; stats: PlayerData; rank: number; onClose: () => void;
 }) {
   const score = calcScore(stats);
   const ratedKits = KITS.filter(k => stats[k.key] !== null);
+  const [introOver, setIntroOver] = useState(false);
 
   useEffect(() => {
     const fn = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
@@ -133,103 +334,113 @@ function ProfileCard({ name, stats, rank, onClose }: {
 
   return (
     <motion.div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4"
-      style={{ background: "rgba(0,0,0,0.82)", backdropFilter: "blur(12px)" }}
+      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4"
+      style={{ background: "rgba(0,0,0,0.92)", backdropFilter: "blur(14px)" }}
       initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
       onClick={(e) => { if (e.currentTarget === e.target) onClose(); }}
     >
       <motion.div
-        initial={{ scale: 0.78, opacity: 0, y: 28 }}
-        animate={{ scale: 1, opacity: 1, y: 0 }}
-        exit={{ scale: 0.80, opacity: 0, y: 18 }}
-        transition={{ type: "spring", stiffness: 380, damping: 30 }}
+        initial={{ scale: 0.8, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        exit={{ scale: 0.85, opacity: 0 }}
+        transition={{ type: "spring", stiffness: 320, damping: 28 }}
         onClick={e => e.stopPropagation()}
         className="relative w-full max-w-[340px] rounded-3xl overflow-hidden"
         style={{
-          background: "linear-gradient(180deg,#14141d 0%,#0d0d14 100%)",
-          border: "1px solid rgba(255,255,255,0.07)",
-          boxShadow: "0 40px 100px rgba(0,0,0,0.9)",
+          background: "linear-gradient(180deg,#0c0c0e 0%,#080810 100%)",
+          border: "1px solid rgba(255,80,0,0.2)",
+          boxShadow: "0 40px 100px rgba(0,0,0,0.98), 0 0 40px rgba(255,60,0,0.1)",
+          minHeight: 340,
         }}
       >
-        {/* header glow */}
-        <div className="absolute inset-x-0 top-0 h-36 pointer-events-none"
-          style={{ background: "radial-gradient(ellipse at 50% -10%, rgba(255,215,0,0.14) 0%, transparent 65%)" }}
-        />
+        {/* Steve TNT Intro overlay */}
+        <AnimatePresence>
+          {!introOver && <SteveTNTIntro onDone={() => setIntroOver(true)} />}
+        </AnimatePresence>
+
+        {/* Red crack lines top */}
+        <div className="absolute inset-x-0 top-0 h-0.5 pointer-events-none"
+          style={{ background: "linear-gradient(90deg,transparent,#ff3300,#ff6600,#ff3300,transparent)" }} />
+
+        {/* Subtle ember glow */}
+        <div className="absolute inset-x-0 top-0 h-32 pointer-events-none"
+          style={{ background: "radial-gradient(ellipse at 50% 0%, rgba(255,60,0,0.08) 0%, transparent 70%)" }} />
 
         {/* close */}
         <button onClick={onClose}
-          className="absolute top-4 right-4 z-20 w-9 h-9 rounded-full flex items-center justify-center"
-          style={{ background: "rgba(255,255,255,0.09)", border: "1px solid rgba(255,255,255,0.1)" }}
+          className="absolute top-4 right-4 z-20 w-8 h-8 rounded-full flex items-center justify-center transition-all hover:scale-110 hover:bg-red-900/40"
+          style={{ background: "rgba(255,255,255,0.07)", border: "1px solid rgba(255,255,255,0.12)" }}
         >
-          <X size={16} className="text-gray-400" />
+          <X size={14} className="text-gray-400" />
         </button>
 
-        <div className="relative z-10 flex flex-col items-center px-7 pt-9 pb-7 gap-4">
+        <div className="relative z-10 flex flex-col items-center px-6 pt-8 pb-7 gap-4">
 
-          {/* Full body skin */}
-          <div className="w-24 h-24 relative">
-            <div
-              className="w-24 h-24 rounded-full overflow-hidden ring-4"
-              style={{ "--tw-ring-color": "#FFD700", boxShadow: "0 0 30px rgba(255,215,0,0.3)", background: "#181828" } as React.CSSProperties}
+          {/* Avatar */}
+          <div className="relative">
+            <div className="w-24 h-24 rounded-2xl overflow-hidden"
+              style={{ boxShadow: "0 0 0 2px rgba(255,60,0,0.4), 0 0 30px rgba(255,60,0,0.2)", background: "#111" }}
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={`https://minotar.net/helm/${name}/96.png`}
-                alt={name}
-                className="w-full h-full object-cover"
+              <img src={`https://minotar.net/helm/${name}/96.png`} alt={name}
+                className="w-full h-full object-cover" style={{ imageRendering: "pixelated" }}
                 onError={e => { (e.target as HTMLImageElement).src = fallbackSrc(96); }}
               />
             </div>
+            {/* Explosion mark */}
+            <motion.div className="absolute -bottom-1 -right-1 text-base"
+              animate={{ scale: [1, 1.2, 1] }} transition={{ duration: 1.5, repeat: Infinity }}
+            >💥</motion.div>
           </div>
 
           {/* Name */}
-          <h2 className="text-[22px] font-extrabold text-white tracking-tight leading-none">{name}</h2>
-
-          {/* Role badge */}
-          <div className="flex items-center gap-2 px-5 py-2 rounded-full text-sm font-bold"
-            style={{ background: "linear-gradient(135deg,#6b4e00,#3e2c00)", color: "#FFD700", border: "1px solid rgba(255,215,0,0.22)" }}>
-            ⚡ RearMC Player
+          <div className="text-center">
+            <h2 className="text-[22px] font-black tracking-tight text-white">{name}</h2>
+            <div className="text-xs font-bold mt-0.5 tracking-widest uppercase" style={{ color: "#ff5500" }}>⚡ RearMC Player</div>
           </div>
 
           {/* NameMC */}
           <a href={`https://namemc.com/profile/${name}`} target="_blank" rel="noopener noreferrer"
-            className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm text-gray-300 hover:text-white transition-colors"
-            style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.08)" }}>
+            className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm text-gray-300 hover:text-white transition-all hover:scale-105"
+            style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.08)" }}>
             <div className="w-5 h-5 rounded bg-[#3C8527] flex items-center justify-center text-white text-[11px] font-black">N</div>
             NameMC <ExternalLink size={11} className="text-gray-500" />
           </a>
 
-          <div className="w-full h-px" style={{ background: "rgba(255,255,255,0.07)" }} />
+          <div className="w-full h-px" style={{ background: "linear-gradient(90deg,transparent,rgba(255,80,0,0.35),transparent)" }} />
 
           {/* Position */}
           <div className="w-full">
-            <p className="text-[10px] font-extrabold uppercase tracking-[0.15em] text-gray-500 mb-2.5">Position</p>
+            <p className="text-[10px] font-extrabold uppercase tracking-[0.15em] text-gray-600 mb-2">Position</p>
             <div className="flex items-center gap-3 px-4 py-3 rounded-xl"
-              style={{ background: "rgba(255,215,0,0.07)", border: "1px solid rgba(255,215,0,0.16)" }}>
-              <div className="h-8 px-3 rounded-lg flex items-center justify-center text-black font-extrabold text-base"
-                style={{ background: "linear-gradient(135deg,#FFD700,#FFA500)", minWidth: 44 }}>
+              style={{ background: "rgba(255,60,0,0.07)", border: "1px solid rgba(255,60,0,0.18)" }}>
+              <div className="h-8 px-3 rounded-lg flex items-center justify-center font-extrabold text-base text-white"
+                style={{ background: "linear-gradient(135deg,#cc2200,#ff5500)", minWidth: 44 }}>
                 {rank}.
               </div>
               <span className="text-base">🏆</span>
-              <span className="text-white font-bold text-sm uppercase tracking-wide">Overall</span>
-              <div className="ml-auto font-bold text-sm" style={{ color: "#FFD700" }}>{score} pts</div>
+              <span className="text-white font-bold text-sm uppercase">Overall</span>
+              <div className="ml-auto font-bold text-sm" style={{ color: "#ff5500" }}>{score} pts</div>
             </div>
           </div>
 
           {/* Tiers */}
           {ratedKits.length > 0 && (
             <div className="w-full">
-              <p className="text-[10px] font-extrabold uppercase tracking-[0.15em] text-gray-500 mb-3">Tiers</p>
+              <p className="text-[10px] font-extrabold uppercase tracking-[0.15em] text-gray-600 mb-3">Tiers</p>
               <div className="flex flex-wrap gap-3 p-4 rounded-2xl"
-                style={{ background: "rgba(255,255,255,0.025)", border: "1px solid rgba(255,255,255,0.06)" }}>
+                style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.07)" }}>
                 {ratedKits.map(kit => (
                   <KitCircle key={kit.key} kit={kit} tier={stats[kit.key]!} size={40} />
                 ))}
               </div>
             </div>
           )}
-
         </div>
+
+        {/* Bottom line */}
+        <div className="absolute inset-x-0 bottom-0 h-0.5"
+          style={{ background: "linear-gradient(90deg,transparent,#ff3300,#ff6600,#ff3300,transparent)" }} />
       </motion.div>
     </motion.div>
   );
@@ -262,8 +473,8 @@ function LbRow({ rank, name, record, onClick }: {
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: Math.min(rank * 0.05, 0.5) }}
-      whileHover={{ scale: 1.02, backgroundColor: "rgba(255,255,255,0.045)", zIndex: 10 }}
-      whileTap={{ scale: 0.99 }}
+      whileHover={{ scale: 1.045, backgroundColor: "rgba(255,255,255,0.055)", zIndex: 10 }}
+      whileTap={{ scale: 0.98 }}
       onClick={onClick}
       className="relative flex items-center gap-4 py-2.5 pr-5 rounded-xl cursor-pointer transition-all duration-200 border border-transparent hover:border-white/10 overflow-visible mb-1.5 group"
       style={{ background: "rgba(255,255,255,0.02)" }}
@@ -293,7 +504,7 @@ function LbRow({ rank, name, record, onClick }: {
 
       {/* Body/Full-skin render */}
       <div
-        className="flex-shrink-0 overflow-hidden relative z-10 transition-transform duration-300 group-hover:scale-110"
+        className="flex-shrink-0 overflow-hidden relative z-10 transition-transform duration-300 group-hover:scale-125"
         style={{ width: 44, height: 72 }}
       >
         {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -313,18 +524,18 @@ function LbRow({ rank, name, record, onClick }: {
 
       {/* Name + score */}
       <div className="flex-1 min-w-0 relative z-10 pl-2">
-        <div className="text-white font-extrabold text-[19px] leading-tight tracking-wide">{name}</div>
+        <div className="text-white font-extrabold text-[17px] sm:text-[19px] leading-tight tracking-wide">{name}</div>
         <div className="flex items-center gap-1.5 mt-1">
           <svg width="14" height="14" viewBox="0 0 14 14" className="text-[#fbbf24] flex-shrink-0">
             <path d="M7 0L9.2 4.5L14 5.2L10.5 8.6L11.3 13.5L7 11.2L2.7 13.5L3.5 8.6L0 5.2L4.8 4.5L7 0Z" fill="currentColor" />
           </svg>
-          <span className="text-gray-300 font-medium text-xs">Combat Master</span>
-          <span className="text-gray-500 font-medium text-xs">({score} points)</span>
+          <span className="text-gray-300 font-medium text-xs hidden sm:inline">Combat Master</span>
+          <span className="text-gray-500 font-medium text-xs">({score} pts)</span>
         </div>
       </div>
 
-      {/* Region Badge */}
-      <div className="flex-shrink-0 relative z-10 px-6">
+      {/* Region Badge — hidden on mobile */}
+      <div className="hidden sm:flex flex-shrink-0 relative z-10 px-6">
         <div
           className="px-2 py-1 rounded-md text-xs font-black uppercase tracking-wider border"
           style={{ background: regionStyle.bg, color: regionStyle.color, borderColor: `${regionStyle.color}33` }}
@@ -333,8 +544,8 @@ function LbRow({ rank, name, record, onClick }: {
         </div>
       </div>
 
-      {/* Tiers — 2-row grid of icon circles */}
-      <div className="flex-shrink-0 w-[240px] relative z-10">
+      {/* Tiers — hidden on mobile, 2-row grid on desktop */}
+      <div className="hidden sm:flex flex-shrink-0 w-[240px] relative z-10">
         {ratedKits.length > 0 && (
           <div className="grid grid-cols-4 gap-x-3 gap-y-2">
             {ratedKits.slice(0, 8).map(kit => (
@@ -588,8 +799,8 @@ export default function TierListPage() {
           {/* ── OVERALL leaderboard (like screenshot 1) ── */}
           {!loading && !error && activeTab === "overall" && (
             <motion.div key="overall-view" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -4 }}>
-              {/* Table header */}
-              <div className="flex items-center gap-4 px-5 py-2 mb-2">
+              {/* Table header - hidden on mobile */}
+              <div className="hidden sm:flex items-center gap-4 px-5 py-2 mb-2">
                 <div className="w-[60px] text-[10px] font-black uppercase tracking-widest text-[#374151]">#</div>
                 <div className="w-[44px] flex-shrink-0" />
                 <div className="flex-1 text-[10px] font-black uppercase tracking-widest text-[#374151] pl-2">Player</div>

@@ -24,23 +24,33 @@ export async function updateSettings(settings: SiteSettings) {
 
 export async function fetchTiers() {
   try {
-    const response = await fetch("http://wings.sprintmc.fun:7020/api/players?limit=10000", {
-      cache: "no-store"
-    });
-    if (!response.ok) return {};
-    const json = await response.json();
-    const mappedData: Record<string, PlayerData> = {};
-    if (json && json.data && Array.isArray(json.data)) {
-      json.data.forEach((player: any) => {
-        if (player.minecraftUsername) {
-          const playerTiers = { ...player.tiers };
-          if (player.minecraftUsername.toLowerCase() === "shadowgenz" && playerTiers.sword === "LT1") {
-            playerTiers.sword = "LT5";
-          }
-          mappedData[player.minecraftUsername] = playerTiers;
-        }
+    const allPlayers: any[] = [];
+    let page = 1;
+    let totalPages = 1;
+
+    do {
+      const response = await fetch(`http://wings.sprintmc.fun:7020/api/players?limit=100&page=${page}`, {
+        cache: "no-store"
       });
-    }
+      if (!response.ok) break;
+      const json = await response.json();
+      if (json && Array.isArray(json.data)) {
+        allPlayers.push(...json.data);
+      }
+      totalPages = json?.pagination?.pages ?? 1;
+      page++;
+    } while (page <= totalPages);
+
+    const mappedData: Record<string, PlayerData> = {};
+    allPlayers.forEach((player: any) => {
+      if (player.minecraftUsername) {
+        const playerTiers = { ...player.tiers };
+        if (player.minecraftUsername.toLowerCase() === "shadowgenz" && playerTiers.sword === "LT1") {
+          playerTiers.sword = "LT5";
+        }
+        mappedData[player.minecraftUsername] = playerTiers;
+      }
+    });
     return mappedData;
   } catch (e) {
     return {};

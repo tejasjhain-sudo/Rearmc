@@ -118,6 +118,144 @@ function KitCircle({ kit, tier, size = 32 }: { kit: typeof KITS[0]; tier: string
   );
 }
 
+/* ─────────────────────────────────── Lightning Storm Intro ───────────── */
+function LightningIntroEffect() {
+  const [active, setActive] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setActive(false), 2500);
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (!active) return null;
+
+  return (
+    <motion.div
+      className="absolute inset-0 z-40 pointer-events-none rounded-2xl overflow-hidden flex items-center justify-center"
+      initial={{ opacity: 1 }}
+      animate={{ opacity: [1, 1, 0] }}
+      transition={{ duration: 2.5, times: [0, 0.85, 1] }}
+    >
+      {/* Dark storm sky backdrop */}
+      <motion.div
+        className="absolute inset-0 bg-[#080b14]"
+        animate={{ opacity: [0.95, 0.3, 0.9, 0.1, 0.8, 0] }}
+        transition={{ duration: 2.2, times: [0, 0.2, 0.4, 0.6, 0.8, 1] }}
+      />
+
+      {/* Screen flash whiteout */}
+      <motion.div
+        className="absolute inset-0 bg-cyan-100"
+        animate={{ opacity: [0, 0.8, 0, 0.95, 0, 0.7, 0] }}
+        transition={{ duration: 2.2, times: [0, 0.25, 0.3, 0.55, 0.6, 0.75, 1] }}
+      />
+
+      {/* Primary Jagged Lightning Bolt 1 */}
+      <motion.svg
+        className="absolute inset-0 w-full h-full text-cyan-300 drop-shadow-[0_0_15px_#38bdf8]"
+        viewBox="0 0 360 420"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="4"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        animate={{
+          opacity: [0, 1, 0, 1, 0, 0.8, 0],
+          scale: [0.95, 1.05, 0.98, 1.02, 1],
+        }}
+        transition={{ duration: 2.2, times: [0, 0.2, 0.3, 0.55, 0.7, 0.85, 1] }}
+      >
+        <path d="M 180 0 L 165 90 L 195 120 L 140 210 L 175 230 L 130 330 L 160 340 L 120 420" />
+        <path d="M 195 120 L 230 170 L 210 200" strokeWidth="2.5" />
+        <path d="M 140 210 L 100 255 L 120 270" strokeWidth="2" />
+      </motion.svg>
+
+      {/* Secondary Electric Yellow Lightning Bolt 2 */}
+      <motion.svg
+        className="absolute inset-0 w-full h-full text-amber-300 drop-shadow-[0_0_18px_#fbbf24]"
+        viewBox="0 0 360 420"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="3.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        animate={{
+          opacity: [0, 0, 1, 0, 1, 0],
+          scale: [1, 0.9, 1.1, 0.95, 1.05, 1],
+        }}
+        transition={{ duration: 2.2, times: [0, 0.3, 0.35, 0.6, 0.65, 1] }}
+      >
+        <path d="M 220 0 L 200 110 L 235 140 L 170 240 L 200 260 L 150 370 L 180 380 L 140 420" />
+      </motion.svg>
+
+      {/* Electric Spark Particles */}
+      {Array.from({ length: 16 }).map((_, i) => {
+        const angle = (i / 16) * Math.PI * 2;
+        const dist = 50 + (i % 5) * 25;
+        return (
+          <motion.div
+            key={i}
+            className="absolute w-2 h-2 rounded-full bg-cyan-200 shadow-[0_0_10px_#38bdf8]"
+            initial={{ x: 0, y: 0, opacity: 0, scale: 0.5 }}
+            animate={{
+              x: [0, Math.cos(angle) * dist],
+              y: [0, Math.sin(angle) * dist],
+              opacity: [0, 1, 0],
+              scale: [0.5, 1.4, 0],
+            }}
+            transition={{ duration: 1.8, delay: 0.2 + (i % 3) * 0.2, repeat: 1, ease: "easeOut" }}
+          />
+        );
+      })}
+
+      {/* Center Strike Text Banner */}
+      <motion.div
+        className="absolute font-black text-2xl text-amber-300 drop-shadow-[0_0_20px_#f59e0b] font-mono tracking-widest flex items-center gap-2 uppercase"
+        animate={{
+          scale: [0.5, 1.3, 1, 1.1, 0.8],
+          opacity: [0, 1, 0.9, 1, 0],
+        }}
+        transition={{ duration: 2.2, times: [0, 0.25, 0.5, 0.75, 1] }}
+      >
+        ⚡ LIGHTNING STRIKE! ⚡
+      </motion.div>
+    </motion.div>
+  );
+}
+
+/* ─────────────────────────────────── Enchantment Particles ───────────── */
+function EnchantmentParticles() {
+  const RUNES = ["ᔑ", "ʖ", "ᓵ", "↸", "ᒷ", "⎓", "⊣", "⍑", "╎", "⋮", "ꖎ", "ᑑ"];
+  return (
+    <div className="absolute inset-0 pointer-events-none overflow-hidden" style={{ zIndex: 5 }}>
+      {Array.from({ length: 12 }).map((_, i) => (
+        <motion.div
+          key={i}
+          className="absolute font-mono text-[11px] font-bold text-purple-400 drop-shadow-[0_0_6px_rgba(168,85,247,0.8)]"
+          style={{
+            top: `${15 + (i * 7) % 70}%`,
+            left: `${10 + (i * 13) % 80}%`,
+          }}
+          animate={{
+            y: [-8, -32, -8],
+            x: [-4, 4, -4],
+            opacity: [0, 0.85, 0],
+            scale: [0.8, 1.2, 0.8],
+          }}
+          transition={{
+            duration: 2.2 + (i % 4) * 0.4,
+            delay: i * 0.25,
+            repeat: Infinity,
+            ease: "easeInOut",
+          }}
+        >
+          {RUNES[i % RUNES.length]}
+        </motion.div>
+      ))}
+    </div>
+  );
+}
+
 /* ─────────────────────────────────── Profile Card ───────────────────── */
 function ProfileCard({ name, stats, rank, onClose }: {
   name: string; stats: PlayerData; rank: number; onClose: () => void;
@@ -142,27 +280,35 @@ function ProfileCard({ name, stats, rank, onClose }: {
     >
       {/* Minecraft Container GUI Frame */}
       <motion.div
-        initial={{ scale: 0.85, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
+        initial={{ scale: 0.82, y: 20, opacity: 0 }}
+        animate={{ scale: 1, y: 0, opacity: 1 }}
         exit={{ scale: 0.85, opacity: 0 }}
-        transition={{ type: "spring", stiffness: 400, damping: 25 }}
+        transition={{ type: "spring", stiffness: 420, damping: 26 }}
         onClick={e => e.stopPropagation()}
-        className="relative w-full max-w-[360px] p-4 select-none"
+        className="relative w-full max-w-[360px] p-4 select-none overflow-hidden"
         style={{
           background: "#c6c6c6",
           boxShadow: "inset -4px -4px 0 #373737, inset 4px 4px 0 #ffffff, 0 25px 60px rgba(0,0,0,0.9)",
           border: "4px solid #1f1f1f",
         }}
       >
+        {/* 2.5 Second Electric Lightning Storm Overlay */}
+        <LightningIntroEffect />
+
+        {/* Floating Enchantment Particles */}
+        <EnchantmentParticles />
+
         {/* Header Bar */}
-        <div className="flex items-center justify-between mb-3 px-1">
+        <div className="flex items-center justify-between mb-3 px-1 relative z-10">
           <div className="flex items-center gap-1.5">
             <span className="text-xs font-black text-[#404040] uppercase tracking-wider font-mono">
               🗡️ PLAYER PROFILE
             </span>
           </div>
           {/* Minecraft X Button */}
-          <button
+          <motion.button
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9, y: 1 }}
             onClick={onClose}
             className="w-6 h-6 flex items-center justify-center text-xs font-black text-[#373737] hover:text-red-600 transition-colors"
             style={{
@@ -171,12 +317,12 @@ function ProfileCard({ name, stats, rank, onClose }: {
             }}
           >
             ✕
-          </button>
+          </motion.button>
         </div>
 
         {/* Inner Dark Slot Container Area */}
         <div
-          className="p-4 flex flex-col items-center gap-4"
+          className="p-4 flex flex-col items-center gap-4 relative z-10"
           style={{
             background: "#1e1e1e",
             boxShadow: "inset 3px 3px 0 #000000, inset -3px -3px 0 #555555",
@@ -184,23 +330,25 @@ function ProfileCard({ name, stats, rank, onClose }: {
         >
           {/* Top Section: Avatar Slot + Player Info */}
           <div className="w-full flex items-center gap-4">
-            {/* Minecraft Head Slot (recessed slot) */}
+            {/* Minecraft Head Slot with Enchantment Purple Aura */}
             <div
               className="w-20 h-20 shrink-0 p-1 flex items-center justify-center relative"
               style={{
                 background: "#8b8b8b",
-                boxShadow: "inset 3px 3px 0 #373737, inset -3px -3px 0 #ffffff",
+                boxShadow: "inset 3px 3px 0 #373737, inset -3px -3px 0 #ffffff, 0 0 16px rgba(168,85,247,0.5)",
               }}
             >
               <div
-                className="w-full h-full"
+                className="w-full h-full overflow-hidden"
                 style={{
                   background: "#181818",
                   boxShadow: "inset 2px 2px 0 #000000, inset -2px -2px 0 #555555",
                 }}
               >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
+                <motion.img
+                  animate={{ y: [0, -3, 0] }}
+                  transition={{ duration: 2.2, repeat: Infinity, ease: "easeInOut" }}
                   src={`https://minotar.net/helm/${name}/64.png`}
                   alt={name}
                   className="w-full h-full object-cover"
@@ -219,7 +367,9 @@ function ProfileCard({ name, stats, rank, onClose }: {
                 ⭐ RearMC Master
               </div>
               <div className="mt-2">
-                <a
+                <motion.a
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95, y: 1 }}
                   href={`https://namemc.com/profile/${name}`}
                   target="_blank"
                   rel="noopener noreferrer"
@@ -231,35 +381,50 @@ function ProfileCard({ name, stats, rank, onClose }: {
                 >
                   <span>NameMC</span>
                   <ExternalLink size={10} />
-                </a>
+                </motion.a>
               </div>
             </div>
           </div>
 
-          {/* Overall Points Bar (GUI Slot Style) */}
-          <div
-            className="w-full p-2.5 flex items-center justify-between"
-            style={{
-              background: "#2a2a2a",
-              boxShadow: "inset 2px 2px 0 #000000, inset -2px -2px 0 #444444",
-            }}
-          >
-            <div className="flex items-center gap-2">
-              <div
-                className="px-2 py-0.5 font-black text-sm text-black"
-                style={{ background: "#ffaa00", boxShadow: "inset 1px 1px 0 #fff, inset -1px -1px 0 #996600" }}
-              >
-                #{rank}
+          {/* Overall Points Bar (GUI Slot Style with XP Bar) */}
+          <div className="w-full flex flex-col gap-1">
+            <div
+              className="w-full p-2.5 flex items-center justify-between"
+              style={{
+                background: "#2a2a2a",
+                boxShadow: "inset 2px 2px 0 #000000, inset -2px -2px 0 #444444",
+              }}
+            >
+              <div className="flex items-center gap-2">
+                <div
+                  className="px-2 py-0.5 font-black text-sm text-black"
+                  style={{ background: "#ffaa00", boxShadow: "inset 1px 1px 0 #fff, inset -1px -1px 0 #996600" }}
+                >
+                  #{rank}
+                </div>
+                <span className="text-xs font-bold text-gray-200">Overall Ranking</span>
               </div>
-              <span className="text-xs font-bold text-gray-200">Overall Ranking</span>
+              <div className="text-right">
+                <span className="font-extrabold text-amber-400 text-sm">{score}</span>
+                <span className="text-[10px] text-gray-400 font-bold ml-1">PTS</span>
+              </div>
             </div>
-            <div className="text-right">
-              <span className="font-extrabold text-amber-400 text-sm">{score}</span>
-              <span className="text-[10px] text-gray-400 font-bold ml-1">PTS</span>
+
+            {/* Animated XP Bar */}
+            <div className="w-full flex items-center gap-2 px-0.5">
+              <div className="flex-1 h-2 rounded-sm bg-[#111] p-0.5 border border-[#333] relative overflow-hidden">
+                <motion.div
+                  initial={{ width: 0 }}
+                  animate={{ width: `${Math.min(100, Math.max(15, (score / 500) * 100))}%` }}
+                  transition={{ duration: 0.8, ease: "easeOut" }}
+                  className="h-full bg-gradient-to-r from-green-500 to-emerald-400 shadow-[0_0_8px_#22c55e]"
+                />
+              </div>
+              <span className="text-[10px] font-black text-green-400 drop-shadow-[0_1px_1px_#000]">LVL {Math.max(1, Math.floor(score / 50))}</span>
             </div>
           </div>
 
-          {/* Rated Kit Slots Grid (Authentic 3D Inventory Item Slots) */}
+          {/* Rated Kit Slots Grid with Item Stagger Drop-in Animation */}
           {ratedKits.length > 0 && (
             <div className="w-full">
               <p className="text-[10px] font-black uppercase tracking-wider text-gray-400 mb-1.5 pl-0.5">
@@ -272,13 +437,16 @@ function ProfileCard({ name, stats, rank, onClose }: {
                   boxShadow: "inset 3px 3px 0 #373737, inset -3px -3px 0 #ffffff",
                 }}
               >
-                {ratedKits.map(kit => {
+                {ratedKits.map((kit, index) => {
                   const tier = stats[kit.key]!;
-                  const tierColor = TIER_COLOR[tier] ?? "#fff";
                   return (
-                    <div
+                    <motion.div
                       key={kit.key}
-                      className="aspect-square flex flex-col items-center justify-center relative group p-1"
+                      initial={{ scale: 0, opacity: 0, y: -10 }}
+                      animate={{ scale: 1, opacity: 1, y: 0 }}
+                      transition={{ delay: index * 0.04 + 0.05, type: "spring", stiffness: 450, damping: 22 }}
+                      whileHover={{ scale: 1.15, zIndex: 20 }}
+                      className="aspect-square flex flex-col items-center justify-center relative group p-1 cursor-pointer"
                       style={{
                         background: "#8b8b8b",
                         boxShadow: "inset 2px 2px 0 #373737, inset -2px -2px 0 #ffffff",
@@ -293,7 +461,7 @@ function ProfileCard({ name, stats, rank, onClose }: {
                       >
                         <KitCircle kit={kit} tier={tier} size={28} />
                       </div>
-                    </div>
+                    </motion.div>
                   );
                 })}
               </div>

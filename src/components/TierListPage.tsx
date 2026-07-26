@@ -123,33 +123,16 @@ function SteveSprite({ running }: { running?: boolean }) {
   return (
     <motion.div
       className="flex flex-col items-center select-none"
-      animate={running ? { y: [0, -6, 0] } : {}}
-      transition={{ duration: 0.35, repeat: running ? Infinity : 0 }}
+      animate={running ? { y: [0, -10, 0] } : {}}
+      transition={{ duration: 0.15, repeat: running ? Infinity : 0 }}
       style={{ imageRendering: "pixelated" }}
     >
-      {/* Head */}
-      <div style={{ width: 36, height: 36, background: "#c89c7c", border: "3px solid #7a5c3a", position: "relative", boxShadow: "inset -4px -4px 0 #a07850" }}>
-        <div style={{ position: "absolute", top: 10, left: 5, width: 8, height: 8, background: "#fff" }} />
-        <div style={{ position: "absolute", top: 10, right: 5, width: 8, height: 8, background: "#fff" }} />
-        <div style={{ position: "absolute", top: 12, left: 7, width: 4, height: 5, background: "#224488" }} />
-        <div style={{ position: "absolute", top: 12, right: 7, width: 4, height: 5, background: "#224488" }} />
-        <div style={{ position: "absolute", bottom: 6, left: 8, right: 8, height: 3, background: "#7a3a2a" }} />
-      </div>
-      {/* Body */}
-      <div style={{ width: 40, height: 44, background: "#5577aa", border: "3px solid #334488", boxShadow: "inset -4px -4px 0 #334488" }} />
-      {/* Legs */}
-      <div style={{ display: "flex" }}>
-        <motion.div
-          style={{ width: 18, height: 28, background: "#335599", border: "2px solid #224488", boxShadow: "inset -2px -2px 0 #224488" }}
-          animate={running ? { rotate: [-18, 18] } : {}}
-          transition={{ duration: 0.35, repeat: running ? Infinity : 0, repeatType: "reverse" }}
-        />
-        <motion.div
-          style={{ width: 18, height: 28, background: "#335599", border: "2px solid #224488", boxShadow: "inset -2px -2px 0 #224488" }}
-          animate={running ? { rotate: [18, -18] } : {}}
-          transition={{ duration: 0.35, repeat: running ? Infinity : 0, repeatType: "reverse" }}
-        />
-      </div>
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src="https://minotar.net/armor/body/MHF_Steve/100.png"
+        alt="Steve"
+        style={{ width: 64, height: 96, objectFit: "contain", imageRendering: "pixelated" }}
+      />
     </motion.div>
   );
 }
@@ -157,18 +140,15 @@ function SteveSprite({ running }: { running?: boolean }) {
 function TNTBlock({ flash }: { flash: boolean }) {
   return (
     <motion.div
-      style={{ width: 38, height: 38, position: "relative", border: "3px solid #333", boxShadow: "0 0 20px rgba(255,60,0,0.8)" }}
+      className="rounded-lg flex flex-col items-center justify-center font-black text-white text-xs select-none"
+      style={{ width: 44, height: 44, border: "3px solid #111", background: "#d32f2f", boxShadow: "0 0 25px rgba(211,47,47,0.9)" }}
       animate={flash ? {
-        background: ["#cc1100", "#ffffff", "#cc1100", "#ffffff", "#cc1100"],
-        boxShadow: ["0 0 20px rgba(255,60,0,0.8)", "0 0 60px rgba(255,200,0,1)", "0 0 20px rgba(255,60,0,0.8)"],
-      } : { background: "#cc1100" }}
-      transition={{ duration: 0.25, repeat: flash ? Infinity : 0 }}
+        background: ["#d32f2f", "#ffffff", "#d32f2f", "#ffffff"],
+        scale: [1, 1.25, 1, 1.3],
+      } : {}}
+      transition={{ duration: 0.12, repeat: flash ? Infinity : 0 }}
     >
-      <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: "40%", background: "#fff", display: "flex", alignItems: "center", justifyContent: "center" }}>
-        <span style={{ fontSize: 8, fontWeight: 900, color: "#cc1100", letterSpacing: 1 }}>TNT</span>
-      </div>
-      <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: "25%", background: "#fff" }} />
-      <div style={{ position: "absolute", inset: "40% 0 25%", background: "#cc1100" }} />
+      <div className="w-full bg-white text-[#d32f2f] text-[9px] text-center font-black py-0.5 tracking-tighter">TNT</div>
     </motion.div>
   );
 }
@@ -180,17 +160,17 @@ function SteveTNTIntro({ onDone }: { onDone: () => void }) {
   const [phase, setPhase] = useState<IntroPhase>("run");
 
   useEffect(() => {
-    const t1 = setTimeout(() => setPhase("plant"), 1100);
-    const t2 = setTimeout(() => setPhase("flash"), 1700);
-    const t3 = setTimeout(() => setPhase("explode"), 2500);
-    const t4 = setTimeout(() => { setPhase("done"); onDone(); }, 3300);
+    const t1 = setTimeout(() => setPhase("plant"), 200);
+    const t2 = setTimeout(() => setPhase("flash"), 400);
+    const t3 = setTimeout(() => setPhase("explode"), 650);
+    const t4 = setTimeout(() => { setPhase("done"); onDone(); }, 950);
     return () => [t1, t2, t3, t4].forEach(clearTimeout);
   }, [onDone]);
 
-  const EXPLOSION_PARTICLES = Array.from({ length: 32 }, (_, i) => {
-    const angle = (i / 32) * 360;
-    const dist = 70 + (i % 5) * 30;
-    const size = 5 + (i % 4) * 4;
+  const EXPLOSION_PARTICLES = Array.from({ length: 36 }, (_, i) => {
+    const angle = (i / 36) * 360;
+    const dist = 90 + (i % 5) * 35;
+    const size = 6 + (i % 4) * 4;
     const color = ["#ff4400","#ff8800","#ffcc00","#ffffff","#ff2222","#ffee00"][i % 6];
     return { id: i, angle, dist, size, color };
   });
@@ -199,33 +179,27 @@ function SteveTNTIntro({ onDone }: { onDone: () => void }) {
 
   return (
     <motion.div
-      className="absolute inset-0 z-30 flex items-end justify-center overflow-hidden rounded-3xl"
-      style={{ background: "linear-gradient(180deg, #050508 0%, #0a0005 100%)" }}
-      exit={{ opacity: 0, scale: 1.1 }}
-      transition={{ duration: 0.3 }}
+      className="absolute inset-0 z-30 flex items-end justify-center overflow-hidden rounded-3xl pointer-events-none"
+      style={{ background: "rgba(5,5,8,0.95)" }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.2 }}
     >
-      {/* Scan-line overlay */}
-      <div className="absolute inset-0 pointer-events-none" style={{
-        backgroundImage: "repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,0,0,0.15) 3px, rgba(0,0,0,0.15) 4px)",
-        zIndex: 1,
-      }} />
-
       {/* Ground */}
-      <div className="absolute bottom-0 inset-x-0 h-16" style={{
+      <div className="absolute bottom-0 inset-x-0 h-14" style={{
         background: "repeating-linear-gradient(90deg, #3a2810 0px, #3a2810 16px, #2a1a08 16px, #2a1a08 32px)",
         borderTop: "3px solid #5a3818",
       }} />
 
       {/* Steve running → planting */}
-      <div className="absolute bottom-14 flex items-end gap-3" style={{ zIndex: 2 }}>
+      <div className="absolute bottom-12 flex items-end gap-3" style={{ zIndex: 2 }}>
         <AnimatePresence mode="wait">
           {phase === "run" && (
             <motion.div
               key="steve-run"
-              initial={{ x: 320, opacity: 1 }}
+              initial={{ x: 260, opacity: 1 }}
               animate={{ x: 0 }}
               exit={{ opacity: 0 }}
-              transition={{ type: "spring", stiffness: 90, damping: 20 }}
+              transition={{ duration: 0.2, ease: "easeOut" }}
             >
               <SteveSprite running />
             </motion.div>
@@ -234,9 +208,9 @@ function SteveTNTIntro({ onDone }: { onDone: () => void }) {
             <motion.div key="steve-plant" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex items-end gap-2">
               <SteveSprite />
               <motion.div
-                initial={{ y: -30, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ type: "spring", stiffness: 300 }}
+                initial={{ y: -40, scale: 0.5 }}
+                animate={{ y: 0, scale: 1 }}
+                transition={{ type: "spring", stiffness: 400, damping: 15 }}
               >
                 <TNTBlock flash={phase === "flash"} />
               </motion.div>
@@ -250,10 +224,10 @@ function SteveTNTIntro({ onDone }: { onDone: () => void }) {
         {phase === "flash" && (
           <motion.div
             key="steve-flee"
-            className="absolute bottom-14 z-10"
+            className="absolute bottom-12 z-10"
             initial={{ x: 0 }}
-            animate={{ x: -400 }}
-            transition={{ duration: 0.6, ease: "easeIn" }}
+            animate={{ x: -300 }}
+            transition={{ duration: 0.25, ease: "easeIn" }}
           >
             <SteveSprite running />
           </motion.div>
@@ -263,57 +237,40 @@ function SteveTNTIntro({ onDone }: { onDone: () => void }) {
       {/* Explosion */}
       <AnimatePresence>
         {phase === "explode" && (
-          <div className="absolute inset-0 flex items-center justify-center" style={{ zIndex: 3 }}>
-            {/* Flash white */}
+          <div className="absolute inset-0 flex items-center justify-center" style={{ zIndex: 10 }}>
+            {/* Flash white screen blast */}
             <motion.div
               className="absolute inset-0"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: [0, 1, 0] }}
-              transition={{ duration: 0.25 }}
-              style={{ background: "#fff" }}
+              initial={{ opacity: 1 }}
+              animate={{ opacity: [1, 0] }}
+              transition={{ duration: 0.3 }}
+              style={{ background: "#ffffff" }}
             />
-            {/* Boom emoji */}
+            {/* Boom text */}
             <motion.div
-              className="text-[80px] absolute z-10"
-              initial={{ scale: 0, opacity: 1 }}
-              animate={{ scale: [0, 2, 2.5], opacity: [1, 1, 0] }}
-              transition={{ duration: 0.7, ease: "easeOut" }}
-            >💥</motion.div>
+              className="text-6xl font-black text-amber-400 drop-shadow-[0_0_20px_rgba(255,100,0,1)] absolute z-20"
+              initial={{ scale: 0.3, opacity: 1 }}
+              animate={{ scale: [0.3, 2.2, 2.5], opacity: [1, 1, 0] }}
+              transition={{ duration: 0.35, ease: "easeOut" }}
+            >BOOM! 💥</motion.div>
             {/* Particles */}
             {EXPLOSION_PARTICLES.map(p => (
               <motion.div
                 key={p.id}
                 className="absolute rounded-sm"
-                style={{ width: p.size, height: p.size, background: p.color, boxShadow: `0 0 ${p.size}px ${p.color}` }}
-                initial={{ x: 0, y: 0, opacity: 1, scale: 1 }}
+                style={{ width: p.size, height: p.size, background: p.color, boxShadow: `0 0 ${p.size * 2}px ${p.color}` }}
+                initial={{ x: 0, y: 0, opacity: 1, scale: 1.2 }}
                 animate={{
                   x: Math.cos((p.angle * Math.PI) / 180) * p.dist,
                   y: Math.sin((p.angle * Math.PI) / 180) * p.dist,
                   opacity: 0, scale: 0,
                 }}
-                transition={{ duration: 0.7, ease: "easeOut" }}
-              />
-            ))}
-            {/* Smoke */}
-            {[0,1,2,3,4].map(i => (
-              <motion.div key={`smoke-${i}`}
-                className="absolute rounded-full"
-                style={{ width: 20 + i * 10, height: 20 + i * 10, background: "rgba(80,80,80,0.6)" }}
-                initial={{ scale: 0, y: 0, opacity: 0.8 }}
-                animate={{ scale: 3 + i, y: -80 - i * 20, opacity: 0 }}
-                transition={{ duration: 0.8, delay: i * 0.06 }}
+                transition={{ duration: 0.35, ease: "easeOut" }}
               />
             ))}
           </div>
         )}
       </AnimatePresence>
-
-      {/* Eerie red light ambient */}
-      <motion.div className="absolute inset-0 pointer-events-none"
-        animate={{ opacity: [0.04, 0.12, 0.04] }}
-        transition={{ duration: 1.5, repeat: Infinity }}
-        style={{ background: "radial-gradient(ellipse at center, rgba(255,40,0,0.3) 0%, transparent 70%)" }}
-      />
     </motion.div>
   );
 }

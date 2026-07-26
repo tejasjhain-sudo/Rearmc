@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 
 export async function GET() {
   try {
-    const response = await fetch("http://163.61.39.244:25567/api/players", {
+    const response = await fetch("http://wings.sprintmc.fun:7020/api/players", {
       next: { revalidate: 60 }
     });
 

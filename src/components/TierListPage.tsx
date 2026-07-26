@@ -69,11 +69,19 @@ const fallbackSrc = (size: number) =>
 function KitCircle({ kit, tier, size = 32 }: { kit: typeof KITS[0]; tier: string; size?: number }) {
   const color = TIER_COLOR[tier] ?? "#666";
   const bg = TIER_BG[tier] ?? "#1a1a1a";
+  const [showTooltip, setShowTooltip] = useState(false);
+
   return (
-    <div className="flex flex-col items-center gap-[3px]">
+    <motion.div
+      className="relative flex flex-col items-center gap-[3px] cursor-pointer group"
+      whileHover={{ scale: 1.3, zIndex: 50 }}
+      transition={{ type: "spring", stiffness: 400, damping: 25 }}
+      onMouseEnter={() => setShowTooltip(true)}
+      onMouseLeave={() => setShowTooltip(false)}
+    >
       <div
-        className="rounded-full flex items-center justify-center"
-        style={{ width: size, height: size, background: bg, border: `1.5px solid ${color}55` }}
+        className="rounded-full flex items-center justify-center transition-all duration-200 group-hover:shadow-[0_0_12px_rgba(255,255,255,0.2)]"
+        style={{ width: size, height: size, background: bg, border: `1.5px solid ${color}aa` }}
       >
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
@@ -82,8 +90,31 @@ function KitCircle({ kit, tier, size = 32 }: { kit: typeof KITS[0]; tier: string
           onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
         />
       </div>
-      <span className="font-bold leading-none" style={{ fontSize: 9, color }}>{tier}</span>
-    </div>
+      <span className="font-bold leading-none transition-colors" style={{ fontSize: 9, color }}>{tier}</span>
+
+      {/* Tooltip showing kit name and tier */}
+      <AnimatePresence>
+        {showTooltip && (
+          <motion.div
+            initial={{ opacity: 0, y: 6, scale: 0.85 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 4, scale: 0.85 }}
+            transition={{ duration: 0.12 }}
+            className="absolute bottom-full mb-2 px-2.5 py-1 rounded-lg text-[11px] font-extrabold whitespace-nowrap pointer-events-none z-50 flex items-center gap-1.5 shadow-2xl border"
+            style={{
+              background: "rgba(15, 15, 20, 0.95)",
+              backdropFilter: "blur(8px)",
+              color: "#fff",
+              borderColor: `${color}88`,
+              boxShadow: `0 8px 20px -4px rgba(0,0,0,0.8), 0 0 12px ${color}44`,
+            }}
+          >
+            <span className="text-gray-300 font-medium">{kit.label}:</span>
+            <span style={{ color }}>{tier}</span>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.div>
   );
 }
 
@@ -231,14 +262,14 @@ function LbRow({ rank, name, record, onClick }: {
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: Math.min(rank * 0.05, 0.5) }}
-      whileHover={{ backgroundColor: "rgba(255,255,255,0.035)" }}
-      whileTap={{ scale: 0.995 }}
+      whileHover={{ scale: 1.02, backgroundColor: "rgba(255,255,255,0.045)", zIndex: 10 }}
+      whileTap={{ scale: 0.99 }}
       onClick={onClick}
-      className="relative flex items-center gap-4 py-2.5 pr-5 rounded-xl cursor-pointer transition-colors border border-transparent hover:border-white/6 overflow-hidden mb-1.5"
+      className="relative flex items-center gap-4 py-2.5 pr-5 rounded-xl cursor-pointer transition-all duration-200 border border-transparent hover:border-white/10 overflow-visible mb-1.5 group"
       style={{ background: "rgba(255,255,255,0.02)" }}
     >
       {/* Rank Block (Skewed background for Top 3) */}
-      <div className="w-[68px] h-full absolute left-0 top-0 bottom-0 overflow-hidden" style={{ zIndex: 0 }}>
+      <div className="w-[68px] h-full absolute left-0 top-0 bottom-0 overflow-hidden rounded-l-xl" style={{ zIndex: 0 }}>
         {isTop3 && (
           <div 
             className="w-full h-full"
@@ -262,7 +293,7 @@ function LbRow({ rank, name, record, onClick }: {
 
       {/* Body/Full-skin render */}
       <div
-        className="flex-shrink-0 overflow-hidden relative z-10"
+        className="flex-shrink-0 overflow-hidden relative z-10 transition-transform duration-300 group-hover:scale-110"
         style={{ width: 44, height: 72 }}
       >
         {/* eslint-disable-next-line @next/next/no-img-element */}

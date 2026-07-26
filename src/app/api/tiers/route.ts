@@ -1,9 +1,11 @@
 import { NextResponse } from "next/server";
 
+export const dynamic = "force-dynamic";
+
 export async function GET() {
   try {
-    const response = await fetch("http://wings.sprintmc.fun:7020/api/players", {
-      next: { revalidate: 60 }
+    const response = await fetch("http://wings.sprintmc.fun:7020/api/players?limit=10000", {
+      cache: "no-store"
     });
 
     if (!response.ok) {

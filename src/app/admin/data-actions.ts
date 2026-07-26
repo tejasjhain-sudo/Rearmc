@@ -24,8 +24,8 @@ export async function updateSettings(settings: SiteSettings) {
 
 export async function fetchTiers() {
   try {
-    const response = await fetch("http://wings.sprintmc.fun:7020/api/players", {
-      next: { revalidate: 0 }
+    const response = await fetch("http://wings.sprintmc.fun:7020/api/players?limit=10000", {
+      cache: "no-store"
     });
     if (!response.ok) return {};
     const json = await response.json();

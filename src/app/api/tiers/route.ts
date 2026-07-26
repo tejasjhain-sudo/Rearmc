@@ -17,8 +17,12 @@ export async function GET() {
     if (json && json.data && Array.isArray(json.data)) {
       json.data.forEach((player: any) => {
         if (player.minecraftUsername) {
+          const playerTiers = { ...player.tiers };
+          if (player.minecraftUsername.toLowerCase() === "shadowgenz" && playerTiers.sword === "LT1") {
+            playerTiers.sword = "LT5";
+          }
           mappedData[player.minecraftUsername] = {
-            tiers: player.tiers,
+            tiers: playerTiers,
             region: player.region ?? "AS",
           };
         }

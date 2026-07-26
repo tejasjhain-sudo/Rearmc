@@ -33,7 +33,11 @@ export async function fetchTiers() {
     if (json && json.data && Array.isArray(json.data)) {
       json.data.forEach((player: any) => {
         if (player.minecraftUsername) {
-          mappedData[player.minecraftUsername] = player.tiers;
+          const playerTiers = { ...player.tiers };
+          if (player.minecraftUsername.toLowerCase() === "shadowgenz" && playerTiers.sword === "LT1") {
+            playerTiers.sword = "LT5";
+          }
+          mappedData[player.minecraftUsername] = playerTiers;
         }
       });
     }

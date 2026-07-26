@@ -44,7 +44,8 @@ const DEFAULT_SETTINGS: SiteSettings = {
     { id: "3", src: "https://images.hdqwalls.com/download/minecraft-2020-4k-42-1920x1080.jpg", title: "Tournament" }
   ],
   reviews: [
-    { id: "1", url: "https://youtu.be/1PslYC-DTDA", reviewer: "Rajesh", title: "RearMC Server Review" }
+    { id: "1", url: "https://youtu.be/1PslYC-DTDA", reviewer: "Rajesh", title: "RearMC Server Review" },
+    { id: "2", url: "https://www.youtube.com/watch?v=rOdJc6Bv3V4", reviewer: "RearMC PvP", title: "RearMC Gameplay Showcase" }
   ]
 };
 

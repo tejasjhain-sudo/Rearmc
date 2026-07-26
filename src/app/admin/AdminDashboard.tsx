@@ -354,6 +354,24 @@ export default function AdminDashboard({ initialSettings, initialTiers }: { init
 
           </div>
         </div>
+
+        {/* Fixed Floating Bottom Save Bar for easy access anywhere */}
+        {activeTab !== "tiers" && (
+          <div className="fixed bottom-6 right-8 z-50 flex items-center gap-4 bg-[#141414]/95 backdrop-blur-md p-3 px-6 rounded-2xl border border-white/15 shadow-[0_10px_30px_rgba(0,0,0,0.8)]">
+            {message.text && (
+              <span className={`text-sm font-medium ${message.type === "success" ? "text-green-400" : "text-red-400"}`}>
+                {message.text}
+              </span>
+            )}
+            <button
+              onClick={handleSaveSettings}
+              disabled={loading}
+              className="flex items-center gap-2 bg-brand-red hover:bg-brand-red/90 text-white px-6 py-2.5 rounded-xl font-bold transition-all hover:scale-105 shadow-xl disabled:opacity-50"
+            >
+              <Save size={18} /> {loading ? "Saving..." : "Save Changes"}
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );

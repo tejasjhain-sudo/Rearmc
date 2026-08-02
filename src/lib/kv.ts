@@ -35,6 +35,21 @@ export interface SiteSettings {
   reviews: Review[];
 }
 
+export interface ProfileCustomization {
+  cardEffect?: string;
+  introEffect?: string;
+  badgeIcon?: string;
+  titleBanner?: string;
+  updatedAt?: number;
+  particles?: string;
+  tag?: string;
+  tagColor?: string;
+  cardTheme?: string;
+  cardLayout?: string;
+  musicUrl?: string;
+  musicName?: string;
+}
+
 // Default initial state
 const DEFAULT_SETTINGS: SiteSettings = {
   discordUrl: "https://discord.gg/p7ENwb6Pz7",
@@ -105,5 +120,22 @@ export async function saveTiers(tiers: Record<string, PlayerData>): Promise<void
     await kv.set('rearmc:tiers', tiers);
   } else {
     setLocalData('tiers', tiers);
+  }
+}
+
+export async function getProfiles(): Promise<Record<string, ProfileCustomization>> {
+  if (useKV) {
+    const data = await kv.get<Record<string, ProfileCustomization>>('rearmc:profiles');
+    return data || {};
+  } else {
+    return getLocalData('profiles', {});
+  }
+}
+
+export async function saveProfiles(profiles: Record<string, ProfileCustomization>): Promise<void> {
+  if (useKV) {
+    await kv.set('rearmc:profiles', profiles);
+  } else {
+    setLocalData('profiles', profiles);
   }
 }

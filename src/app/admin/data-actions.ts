@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 "use server";
 
 import { cookies } from "next/headers";

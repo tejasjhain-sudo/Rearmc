@@ -344,19 +344,20 @@ const ProfileCard = forwardRef<HTMLDivElement, {
   useEffect(() => {
     let isCurrent = true;
     if (profile?.musicName) {
-      fetch(`https://lrclib.net/api/search?q=${encodeURIComponent(profile.musicName)}`)
+      const musicStr = String(profile.musicName);
+      fetch(`https://lrclib.net/api/search?q=${encodeURIComponent(musicStr)}`)
         .then(res => res.json())
         .then(data => {
           if (!isCurrent) return;
           if (data && data.length > 0 && data[0].plainLyrics) {
             setLyrics(data[0].plainLyrics);
           } else {
-            setLyrics(Array(20).fill(profile.musicName).join(" • "));
+            setLyrics(Array(20).fill(musicStr).join(" • "));
           }
         })
         .catch(() => {
           if (!isCurrent) return;
-          setLyrics(Array(20).fill(profile.musicName).join(" • "));
+          setLyrics(Array(20).fill(musicStr).join(" • "));
         });
     } else {
       // eslint-disable-next-line react-hooks/set-state-in-effect

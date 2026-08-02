@@ -263,8 +263,9 @@ function EnchantmentParticles() {
 import React, { forwardRef } from "react";
 
 /* ─────────────────────────────────── Profile Card ───────────────────── */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const ProfileCard = forwardRef<HTMLDivElement, {
-  name: string; stats: PlayerData; rank: number; profile: Record<string, unknown> | null; onClose: () => void; onEdit?: () => void; previewMode?: boolean;
+  name: string; stats: PlayerData; rank: number; profile: any; onClose: () => void; onEdit?: () => void; previewMode?: boolean;
 }>(({ name, stats, rank, profile, onClose, onEdit, previewMode = false }, ref) => {
   const score = calcScore(stats);
   const ratedKits = KITS.filter(k => stats[k.key] !== null);

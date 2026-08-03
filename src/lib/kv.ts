@@ -1,6 +1,6 @@
-import { kv } from '@vercel/kv';
 import fs from 'fs';
 import path from 'path';
+import { supabase } from './supabase';
 
 // Define our types
 export type Category = "sword" | "axe" | "nethpot" | "dpot" | "uhc" | "smp" | "crystal" | "mace";
@@ -64,10 +64,7 @@ const DEFAULT_SETTINGS: SiteSettings = {
   ]
 };
 
-// Check if we are running with Vercel KV or need local fallback
-const useKV = !!process.env.KV_REST_API_URL;
-
-// Local fallback helper
+// Local fallback helper for development
 const getLocalData = <T>(key: string, defaultValue: T): T => {
   try {
     const filePath = path.join(process.cwd(), `.local_${key}.json`);
@@ -90,52 +87,58 @@ const setLocalData = <T>(key: string, value: T) => {
 };
 
 export async function getSettings(): Promise<SiteSettings> {
-  if (useKV) {
-    const data = await kv.get<SiteSettings>('rearmc:settings');
-    return data || DEFAULT_SETTINGS;
-  } else {
-    return getLocalData('settings', DEFAULT_SETTINGS);
+  try {
+    const { data } = await supabase.from('rearmc_kv').select('value').eq('key', 'rearmc:settings').single();
+    if (data?.value) return data.value as SiteSettings;
+  } catch (e) {
+    console.error("Supabase getSettings error", e);
   }
+  return getLocalData('settings', DEFAULT_SETTINGS);
 }
 
 export async function saveSettings(settings: SiteSettings): Promise<void> {
-  if (useKV) {
-    await kv.set('rearmc:settings', settings);
-  } else {
-    setLocalData('settings', settings);
+  try {
+    await supabase.from('rearmc_kv').upsert({ key: 'rearmc:settings', value: settings });
+  } catch (e) {
+    console.error("Supabase saveSettings error", e);
   }
+  setLocalData('settings', settings);
 }
 
 export async function getTiers(): Promise<Record<string, PlayerData>> {
-  if (useKV) {
-    const data = await kv.get<Record<string, PlayerData>>('rearmc:tiers');
-    return data || {};
-  } else {
-    return getLocalData('tiers', {});
+  try {
+    const { data } = await supabase.from('rearmc_kv').select('value').eq('key', 'rearmc:tiers').single();
+    if (data?.value) return data.value;
+  } catch (e) {
+    console.error("Supabase getTiers error", e);
   }
+  return getLocalData('tiers', {});
 }
 
 export async function saveTiers(tiers: Record<string, PlayerData>): Promise<void> {
-  if (useKV) {
-    await kv.set('rearmc:tiers', tiers);
-  } else {
-    setLocalData('tiers', tiers);
+  try {
+    await supabase.from('rearmc_kv').upsert({ key: 'rearmc:tiers', value: tiers });
+  } catch (e) {
+    console.error("Supabase saveTiers error", e);
   }
+  setLocalData('tiers', tiers);
 }
 
 export async function getProfiles(): Promise<Record<string, ProfileCustomization>> {
-  if (useKV) {
-    const data = await kv.get<Record<string, ProfileCustomization>>('rearmc:profiles');
-    return data || {};
-  } else {
-    return getLocalData('profiles', {});
+  try {
+    const { data } = await supabase.from('rearmc_kv').select('value').eq('key', 'rearmc:profiles').single();
+    if (data?.value) return data.value;
+  } catch (e) {
+    console.error("Supabase getProfiles error", e);
   }
+  return getLocalData('profiles', {});
 }
 
 export async function saveProfiles(profiles: Record<string, ProfileCustomization>): Promise<void> {
-  if (useKV) {
-    await kv.set('rearmc:profiles', profiles);
-  } else {
-    setLocalData('profiles', profiles);
+  try {
+    await supabase.from('rearmc_kv').upsert({ key: 'rearmc:profiles', value: profiles });
+  } catch (e) {
+    console.error("Supabase saveProfiles error", e);
   }
+  setLocalData('profiles', profiles);
 }

@@ -1085,7 +1085,7 @@ export default function TierListPage() {
                 const p = prompt("Enter username to edit profile:");
                 if (p) {
                   // Find exact case from data to ensure local state updates correctly
-                  const exactMatch = Object.keys(data).find(k => k.toLowerCase() === p.toLowerCase());
+                  const exactMatch = Object.keys(data || {}).find(k => k.toLowerCase() === p.toLowerCase());
                   handleEditClick(exactMatch || p);
                 }
               }}

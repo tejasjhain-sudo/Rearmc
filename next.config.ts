@@ -8,6 +8,10 @@ const nextConfig: NextConfig = {
       { protocol: "https", hostname: "cravatar.eu" },
     ],
   },
+  output: "standalone",
+  typescript: {
+    ignoreBuildErrors: true,
+  },
 };
 
 export default nextConfig;

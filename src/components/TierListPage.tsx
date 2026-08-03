@@ -1083,7 +1083,11 @@ export default function TierListPage() {
             <button 
               onClick={() => {
                 const p = prompt("Enter username to edit profile:");
-                if (p) handleEditClick(p);
+                if (p) {
+                  // Find exact case from data to ensure local state updates correctly
+                  const exactMatch = Object.keys(data).find(k => k.toLowerCase() === p.toLowerCase());
+                  handleEditClick(exactMatch || p);
+                }
               }}
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold text-gray-300 bg-white/10 hover:bg-white/20 border border-white/20 transition-all"
             >

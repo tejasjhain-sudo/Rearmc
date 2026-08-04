@@ -27,9 +27,16 @@ export default function Navbar() {
 
   return (
     <nav
-      className={`fixed top-0 z-40 w-full transition-all duration-300 ${
-        isScrolled ? "glass py-3" : "bg-transparent py-5"
+      className={`fixed top-0 z-40 w-full transition-all duration-500 ${
+        isScrolled 
+          ? "py-3 border-b border-white/5" 
+          : "bg-transparent py-5"
       }`}
+      style={isScrolled ? {
+        background: "rgba(10, 10, 10, 0.75)",
+        backdropFilter: "blur(24px)",
+        boxShadow: "0 10px 30px rgba(0,0,0,0.5)"
+      } : {}}
     >
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between">
@@ -48,16 +55,22 @@ export default function Navbar() {
               <Link
                 key={link.name}
                 href={link.href}
-                className="text-sm font-medium text-gray-300 transition-colors hover:text-brand-red"
+                className="text-sm font-bold tracking-wide text-gray-300 transition-all duration-300 hover:text-brand-red hover:scale-110 drop-shadow-sm hover:drop-shadow-[0_0_8px_rgba(239,68,68,0.6)]"
               >
                 {link.name}
               </Link>
             ))}
             <Link
               href="https://discord.gg/rearmc"
-              className="rounded-full bg-brand-red px-5 py-2 text-sm font-bold text-white shadow-[0_0_15px_rgba(255,45,45,0.4)] transition-all hover:scale-105 hover:shadow-[0_0_25px_rgba(255,45,45,0.6)]"
+              className="rounded-xl px-6 py-2.5 text-sm font-black tracking-wider text-white transition-all duration-300 hover:scale-110 hover:-translate-y-0.5 overflow-hidden relative group"
+              style={{
+                background: "linear-gradient(135deg, rgba(239, 68, 68, 0.9) 0%, rgba(185, 28, 28, 0.95) 100%)",
+                boxShadow: "0 5px 20px -5px rgba(239, 68, 68, 0.8), inset 0 2px 5px rgba(255,255,255,0.3)",
+                border: "1px solid rgba(255,100,100,0.5)"
+              }}
             >
-              Play Now
+              <div className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
+              <span className="relative z-10 uppercase drop-shadow-md">Play Now</span>
             </Link>
           </div>
 
@@ -73,13 +86,19 @@ export default function Navbar() {
 
       {/* Mobile Nav */}
       {mobileMenuOpen && (
-        <div className="md:hidden glass absolute top-full left-0 w-full border-t border-white/10 p-4 shadow-lg">
+        <div 
+          className="md:hidden absolute top-full left-0 w-full border-t border-white/5 p-4 shadow-2xl"
+          style={{
+            background: "rgba(15, 15, 15, 0.95)",
+            backdropFilter: "blur(24px)",
+          }}
+        >
           <div className="flex flex-col space-y-4">
             {NAV_LINKS.map((link) => (
               <Link
                 key={link.name}
                 href={link.href}
-                className="text-base font-medium text-gray-300 hover:text-brand-red"
+                className="text-base font-bold tracking-wide text-gray-300 hover:text-brand-red transition-colors"
                 onClick={() => setMobileMenuOpen(false)}
               >
                 {link.name}
@@ -87,7 +106,11 @@ export default function Navbar() {
             ))}
             <Link
               href="https://discord.gg/rearmc"
-              className="inline-block rounded-md bg-brand-red px-4 py-2 text-center font-bold text-white shadow-lg"
+              className="inline-block rounded-xl px-4 py-3 text-center font-black uppercase tracking-widest text-white shadow-lg transition-transform active:scale-95"
+              style={{
+                background: "linear-gradient(135deg, rgba(239, 68, 68, 0.9) 0%, rgba(185, 28, 28, 0.95) 100%)",
+                border: "1px solid rgba(255,100,100,0.5)"
+              }}
             >
               Play Now
             </Link>

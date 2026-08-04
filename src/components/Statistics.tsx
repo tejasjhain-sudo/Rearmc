@@ -39,24 +39,33 @@ export default function Statistics() {
   ];
 
   return (
-    <section className="relative py-20 bg-brand-red/5 border-y border-brand-red/10 overflow-hidden">
-      {/* Background pattern */}
-      <div className="absolute inset-0 opacity-[0.03] bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMiIgY3k9IjIiIHI9IjIiIGZpbGw9IiNmZmZmZmYiLz48L3N2Zz4=')]" />
+    <section className="relative py-20 overflow-hidden" style={{ background: "rgba(10,10,10,0.8)", borderTop: "1px solid rgba(255,255,255,0.05)", borderBottom: "1px solid rgba(255,255,255,0.05)" }}>
+      {/* Background radial glow */}
+      <div className="absolute inset-0 flex items-center justify-center opacity-30 pointer-events-none">
+        <div className="w-[800px] h-[300px] bg-brand-red/20 blur-[120px] rounded-[100%]" />
+      </div>
       
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12 text-center max-w-4xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-center max-w-5xl mx-auto">
           {STATS.map((stat, index) => (
             <motion.div
               key={index}
-              initial={{ opacity: 0, scale: 0.9 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true }}
-              transition={{ delay: index * 0.1, duration: 0.5 }}
+              initial={{ opacity: 0, y: 30, scale: 0.95 }}
+              whileInView={{ opacity: 1, y: 0, scale: 1 }}
+              viewport={{ once: true, margin: "-50px" }}
+              transition={{ delay: index * 0.1, type: "spring", stiffness: 300, damping: 25 }}
+              className="p-8 rounded-3xl transition-transform duration-500 hover:scale-110 cursor-default"
+              style={{
+                background: "linear-gradient(135deg, rgba(20,20,20,0.4) 0%, rgba(5,5,5,0.6) 100%)",
+                backdropFilter: "blur(12px)",
+                border: "1px solid rgba(255,255,255,0.05)",
+                boxShadow: "0 10px 30px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.1)"
+              }}
             >
-              <div className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold text-transparent bg-clip-text bg-gradient-to-b from-white to-gray-400 font-mono mb-1 md:mb-2 drop-shadow-md">
+              <div className="text-4xl md:text-5xl lg:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-b from-white to-gray-500 font-mono mb-2 drop-shadow-[0_4px_10px_rgba(0,0,0,0.8)] tracking-tight">
                 <AnimatedCounter value={stat.value} prefix={stat.prefix} suffix={stat.suffix} decimals={stat.decimals} />
               </div>
-              <div className="text-xs sm:text-sm md:text-base text-brand-red font-bold uppercase tracking-widest">
+              <div className="text-[11px] text-brand-red font-black uppercase tracking-[0.2em] drop-shadow-[0_0_8px_rgba(239,68,68,0.5)]">
                 {stat.label}
               </div>
             </motion.div>

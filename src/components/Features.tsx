@@ -60,21 +60,33 @@ export default function Features() {
           </motion.p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 relative z-10">
           {FEATURES.map((feature, index) => (
             <motion.div
               key={index}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: index * 0.1 }}
-              className="group glass p-8 rounded-2xl border border-white/5 hover:border-brand-red/30 transition-all duration-300 hover:-translate-y-2 hover:shadow-[0_10px_30px_rgba(255,45,45,0.1)]"
+              initial={{ opacity: 0, y: 30, scale: 0.95 }}
+              whileInView={{ opacity: 1, y: 0, scale: 1 }}
+              viewport={{ once: true, margin: "-50px" }}
+              transition={{ delay: index * 0.1, duration: 0.5, type: "spring", stiffness: 300, damping: 25 }}
+              className="group p-8 rounded-3xl transition-all duration-500 hover:scale-105 hover:-translate-y-2 relative overflow-hidden cursor-pointer"
+              style={{
+                background: "linear-gradient(135deg, rgba(20,20,20,0.6) 0%, rgba(10,10,10,0.8) 100%)",
+                backdropFilter: "blur(16px)",
+                border: "1px solid rgba(255,255,255,0.05)",
+                boxShadow: "0 10px 30px rgba(0,0,0,0.5)"
+              }}
             >
-              <div className="w-14 h-14 rounded-xl bg-brand-red/10 flex items-center justify-center text-brand-red mb-6 transition-transform duration-300 group-hover:scale-110 group-hover:bg-brand-red group-hover:text-white">
+              {/* Subtle hover glow behind the card */}
+              <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" style={{ boxShadow: "inset 0 0 30px rgba(239, 68, 68, 0.1)" }} />
+              
+              <div 
+                className="w-16 h-16 rounded-2xl flex items-center justify-center text-brand-red mb-6 transition-all duration-500 group-hover:scale-110 group-hover:rotate-6 group-hover:bg-brand-red group-hover:text-white group-hover:shadow-[0_0_20px_rgba(239,68,68,0.6)]"
+                style={{ background: "rgba(239, 68, 68, 0.1)", border: "1px solid rgba(239, 68, 68, 0.2)" }}
+              >
                 {feature.icon}
               </div>
-              <h3 className="text-xl font-bold text-white mb-3">{feature.title}</h3>
-              <p className="text-gray-400 text-sm leading-relaxed">
+              <h3 className="text-2xl font-black tracking-wide text-white mb-3 group-hover:text-brand-red transition-colors duration-300 drop-shadow-sm">{feature.title}</h3>
+              <p className="text-gray-400 text-sm leading-relaxed group-hover:text-gray-300 transition-colors duration-300">
                 {feature.description}
               </p>
             </motion.div>

@@ -66,55 +66,75 @@ const KITS: { key: Category; label: string; icon: string }[] = [
 const calcScore = (s: PlayerData) =>
   Object.values(s).reduce((sum: number, t) => sum + (t ? (TIER_POINTS[t as string] ?? 0) : 0), 0);
 
-const fallbackSrc = (size: number) =>
-  `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='${size}' height='${size}'%3E%3Crect width='${size}' height='${size}' fill='%23181818'/%3E%3C/svg%3E`;
+const fallbackSrc = (size: number, name?: string) => {
+  const isAlex = name && name.length % 2 !== 0;
+  return `https://minotar.net/helm/${isAlex ? 'Alex' : 'MHF_Steve'}/${size}.png`;
+};
 
 /* ─────────────────────────────────── Kit Icon Circle ────────────────── */
-function KitCircle({ kit, tier, size = 32 }: { kit: typeof KITS[0]; tier: string; size?: number }) {
-  const color = TIER_COLOR[tier] ?? "#666";
-  const bg = TIER_BG[tier] ?? "#1a1a1a";
+function KitCircle({ kit, tier, size = 34 }: { kit: typeof KITS[0]; tier: string; size?: number }) {
+  const color = TIER_COLOR[tier] ?? "#aaaaaa";
   const [showTooltip, setShowTooltip] = useState(false);
 
   return (
     <motion.div
-      className="relative flex flex-col items-center gap-[3px] cursor-pointer group"
-      whileHover={{ scale: 1.3, zIndex: 50 }}
-      transition={{ type: "spring", stiffness: 400, damping: 25 }}
+      className="relative flex flex-col items-center gap-1.5 cursor-pointer group"
+      whileHover={{ scale: 1.15, y: -2, zIndex: 50 }}
+      transition={{ type: "spring", stiffness: 450, damping: 20 }}
       onMouseEnter={() => setShowTooltip(true)}
       onMouseLeave={() => setShowTooltip(false)}
     >
       <div
-        className="rounded-full flex items-center justify-center transition-all duration-200 group-hover:shadow-[0_0_12px_rgba(255,255,255,0.2)]"
-        style={{ width: size, height: size, background: bg, border: `1.5px solid ${color}aa` }}
+        className="rounded-full flex items-center justify-center transition-all duration-300 relative"
+        style={{ 
+          width: size, 
+          height: size, 
+          background: "linear-gradient(135deg, rgba(255,255,255,0.06), rgba(255,255,255,0.01))", 
+          backdropFilter: "blur(12px)",
+          border: `1.5px solid ${color}aa`,
+          boxShadow: `0 4px 15px rgba(0,0,0,0.5), inset 0 2px 10px rgba(255,255,255,0.05), 0 0 10px ${color}33`
+        }}
       >
+        <div className="absolute inset-0 rounded-full bg-gradient-to-t from-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={kit.icon} alt={kit.label}
-          style={{ width: size * 0.58, height: size * 0.58, imageRendering: "pixelated", objectFit: "contain" }}
+          style={{ width: size * 0.65, height: size * 0.65, imageRendering: "pixelated", objectFit: "contain", filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.8))" }}
           onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
         />
       </div>
-      <span className="font-extrabold leading-none transition-colors" style={{ fontSize: Math.max(11, size * 0.3), color }}>{tier}</span>
+      
+      <span 
+        className="font-black leading-none tracking-widest uppercase transition-colors" 
+        style={{ 
+          fontSize: Math.max(10, size * 0.35), 
+          color: color,
+          textShadow: `0 2px 8px rgba(0,0,0,0.8), 0 0 8px ${color}66`
+        }}
+      >
+        {tier}
+      </span>
 
       {/* Tooltip showing kit name and tier */}
       <AnimatePresence>
         {showTooltip && (
           <motion.div
-            initial={{ opacity: 0, y: 6, scale: 0.85 }}
+            initial={{ opacity: 0, y: 8, scale: 0.9 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 4, scale: 0.85 }}
-            transition={{ duration: 0.12 }}
-            className="absolute bottom-full mb-2 px-2.5 py-1 rounded-lg text-[11px] font-extrabold whitespace-nowrap pointer-events-none z-50 flex items-center gap-1.5 shadow-2xl border"
+            exit={{ opacity: 0, y: 4, scale: 0.9 }}
+            transition={{ duration: 0.15, ease: "easeOut" }}
+            className="absolute bottom-full mb-3 px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest whitespace-nowrap pointer-events-none z-50 flex items-center gap-2"
             style={{
-              background: "rgba(15, 15, 20, 0.95)",
-              backdropFilter: "blur(8px)",
+              background: "rgba(10, 10, 10, 0.95)",
+              backdropFilter: "blur(12px)",
               color: "#fff",
-              borderColor: `${color}88`,
-              boxShadow: `0 8px 20px -4px rgba(0,0,0,0.8), 0 0 12px ${color}44`,
+              border: `1px solid ${color}66`,
+              boxShadow: `0 10px 30px rgba(0,0,0,0.8), 0 0 15px ${color}44`,
             }}
           >
-            <span className="text-gray-300 font-medium">{kit.label}:</span>
-            <span style={{ color }}>{tier}</span>
+            <span className="text-white/60">{kit.label}</span>
+            <div className="w-1 h-1 rounded-full" style={{ backgroundColor: color, boxShadow: `0 0 4px ${color}` }} />
+            <span style={{ color, textShadow: `0 0 8px ${color}88` }}>{tier}</span>
           </motion.div>
         )}
       </AnimatePresence>
@@ -367,10 +387,10 @@ const ProfileCard = forwardRef<HTMLDivElement, {
     return () => { isCurrent = false; };
   }, [profile?.musicName]);
   const layoutStyles = {
-    padding: layout === "tall" ? "p-10" : layout === "compact" ? "p-3" : "p-4",
-    gap: layout === "tall" ? "gap-10" : layout === "compact" ? "gap-2" : "gap-4",
+    padding: layout === "tall" ? "p-5 sm:p-10" : layout === "compact" ? "p-4 sm:p-6" : "p-5 sm:p-8",
+    gap: layout === "tall" ? "gap-6 sm:gap-8" : layout === "compact" ? "gap-4 sm:gap-5" : "gap-5 sm:gap-6",
     avatar: layout === "tall" ? 96 : layout === "compact" ? 48 : 64,
-    width: layout === "tall" ? "max-w-[480px]" : "max-w-[360px]",
+    width: layout === "tall" ? "w-[95vw] sm:max-w-[560px]" : layout === "compact" ? "w-[95vw] sm:max-w-[650px]" : "w-[95vw] sm:max-w-[500px]",
   };
 
   useEffect(() => {
@@ -402,12 +422,16 @@ const ProfileCard = forwardRef<HTMLDivElement, {
           initial={{ opacity: 0, x: -100, scale: 0.8 }}
           animate={{ opacity: 1, x: 0, scale: 1 }}
           transition={{ delay: 0.15, type: "spring", stiffness: 200, damping: 20 }}
-          className="hidden md:block absolute -left-[280px] xl:-left-[350px] bottom-0 pointer-events-none drop-shadow-[0_20px_50px_rgba(0,0,0,0.9)] z-0"
+          className={`hidden md:block absolute bottom-0 pointer-events-none drop-shadow-[0_20px_50px_rgba(0,0,0,0.9)] z-0 ${layout === 'tall' ? '-left-[320px] xl:-left-[400px]' : '-left-[280px] xl:-left-[350px]'}`}
         >
           <img 
             src={`https://visage.surgeplay.com/full/512/${name}`}
             alt={`${name} 3D Skin`}
-            className="w-[240px] xl:w-[300px] object-contain drop-shadow-[0_0_30px_rgba(255,255,255,0.15)]"
+            className={`${layout === 'tall' ? 'w-[280px] xl:w-[350px]' : 'w-[240px] xl:w-[300px]'} object-contain drop-shadow-[0_0_30px_rgba(255,255,255,0.15)]`}
+            onError={(e) => {
+              const isAlex = name.length % 2 !== 0;
+              (e.target as HTMLImageElement).src = `https://visage.surgeplay.com/full/512/${isAlex ? 'Alex' : 'MHF_Steve'}`;
+            }}
           />
         </motion.div>
 
@@ -422,13 +446,27 @@ const ProfileCard = forwardRef<HTMLDivElement, {
           exit={{ scale: 0.85, opacity: 0 }}
           transition={
             profile?.musicUrl
-              ? { duration: 0.45, repeat: Infinity, ease: "linear" }
+              ? { 
+                  duration: 0.45,
+                  scale: { repeat: Infinity, ease: "linear", duration: 0.45 },
+                  rotate: { repeat: Infinity, ease: "linear", duration: 0.45 },
+                  x: { repeat: Infinity, ease: "linear", duration: 0.45 },
+                  opacity: { duration: 0.3 }
+                }
               : { type: "spring", stiffness: 420, damping: 26 }
           }
           onClick={e => e.stopPropagation()}
-          className={`relative w-full ${layoutStyles.width} ${!previewMode ? layoutStyles.padding : 'p-3'} select-none overflow-hidden rounded-lg flex flex-col z-10`}
-          style={themeStyles.outer}
+          className={`relative ${layoutStyles.width} ${!previewMode ? layoutStyles.padding : 'p-3'} select-none overflow-y-auto overflow-x-hidden custom-scrollbar max-h-[90vh] rounded-2xl flex flex-col z-10`}
+          style={{
+            background: "linear-gradient(135deg, rgba(20,20,20,0.7) 0%, rgba(5,5,5,0.85) 100%)",
+            backdropFilter: "blur(24px)",
+            WebkitBackdropFilter: "blur(24px)",
+            border: "1px solid rgba(255,255,255,0.08)",
+            boxShadow: "0 30px 60px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.1)",
+          }}
         >
+          {/* Subtle inner glow */}
+          <div className="absolute inset-0 rounded-2xl pointer-events-none" style={{ boxShadow: "inset 0 0 100px rgba(255,255,255,0.02)" }} />
         {/* Hidden Audio Element */}
         {profile?.musicUrl && (
           <audio ref={audioRef} loop muted={isMuted} preload="auto">
@@ -452,10 +490,11 @@ const ProfileCard = forwardRef<HTMLDivElement, {
          profile?.particles !== "none" ? <ImportedEnchantment /> : null}
 
         {/* Header Bar */}
-        <div className={`flex items-center justify-between mb-2 relative z-10 ${layout === 'tall' ? 'mb-4' : ''}`}>
-          <div className="flex items-center gap-2">
-            <span className="font-bold text-sm tracking-wide" style={{ color: themeStyles.text }}>
-              {name}&apos;s Profile
+        <div className={`flex items-center justify-between mb-4 relative z-10`}>
+          <div className="flex items-center gap-3">
+            <div className="w-2 h-2 rounded-full shadow-[0_0_8px_#fff]" style={{ backgroundColor: themeStyles.text || "#fff" }} />
+            <span className="font-extrabold text-sm tracking-[0.2em] uppercase text-white/80">
+              Player Profile
             </span>
           </div>
           <div className="flex items-center gap-2">
@@ -483,156 +522,148 @@ const ProfileCard = forwardRef<HTMLDivElement, {
           </div>
         </div>
 
-        {/* Inner Dark Slot Container Area */}
+        {/* Inner Content Area */}
         <div
-          className={`flex flex-col items-center relative z-10 rounded-sm flex-1 ${layoutStyles.padding} ${layoutStyles.gap}`}
-          style={{ ...themeStyles.inner, minHeight: layout === "tall" ? "480px" : "auto" }}
+          className={`flex ${layout === 'compact' ? 'flex-row items-center' : 'flex-col items-center'} relative z-10 flex-1 gap-6`}
+          style={{ minHeight: layout === "tall" ? "620px" : layout === "standard" ? "480px" : "auto" }}
         >
           {/* Top Section: Avatar Slot + Player Info */}
-          <div className={`w-full flex items-center ${layout === 'compact' ? 'gap-3' : 'gap-4'}`}>
-            {/* Minecraft Head Slot with Enchantment Purple Aura */}
+          <div className={`w-full flex ${layout === 'compact' ? 'flex-col items-center w-[160px] shrink-0 gap-4' : 'flex-row items-center gap-5'}`}>
+            {/* Holographic Avatar Display */}
             <div
-              className="w-20 h-20 shrink-0 p-1 flex items-center justify-center relative"
+              className="w-24 h-24 shrink-0 p-1 rounded-xl flex items-center justify-center relative group"
               style={{
-                background: "#8b8b8b",
-                boxShadow: "inset 3px 3px 0 #373737, inset -3px -3px 0 #ffffff, 0 0 16px rgba(168,85,247,0.5)",
+                background: "linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.02))",
+                border: "1px solid rgba(255,255,255,0.1)",
+                boxShadow: "0 8px 32px rgba(0,0,0,0.5), inset 0 0 20px rgba(255,255,255,0.05)",
               }}
             >
               <div
-                className="w-full h-full overflow-hidden"
-                style={{
-                  background: "#181818",
-                  boxShadow: "inset 2px 2px 0 #000000, inset -2px -2px 0 #555555",
-                }}
+                className="w-full h-full overflow-hidden rounded-lg relative"
+                style={{ background: "#050505" }}
               >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <motion.img
-                  animate={{ y: [0, -3, 0] }}
-                  transition={{ duration: 2.2, repeat: Infinity, ease: "easeInOut" }}
+                  animate={{ y: [0, -4, 0] }}
+                  transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
                   src={`https://minotar.net/helm/${name}/64.png`}
                   alt={name}
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-cover scale-[1.15] drop-shadow-[0_10px_10px_rgba(0,0,0,0.8)]"
                   style={{ imageRendering: "pixelated" }}
-                  onError={e => { (e.target as HTMLImageElement).src = fallbackSrc(64); }}
+                  onError={e => { (e.target as HTMLImageElement).src = fallbackSrc(64, name); }}
                 />
               </div>
             </div>
 
             {/* Name + Details */}
-            <div className="flex-1 min-w-0">
-              <h2 className="text-xl font-extrabold text-white truncate tracking-wide drop-shadow-[2px_2px_0_#000]">
+            <div className={`flex-1 min-w-0 ${layout === 'compact' ? 'text-center flex flex-col items-center' : ''}`}>
+              <h2 className="text-3xl font-black text-white truncate tracking-tight drop-shadow-[0_2px_10px_rgba(255,255,255,0.2)] mb-1">
                 {name}
               </h2>
               {(() => {
-                const colors: Record<string, { bg: string, border: string, text: string }> = {
-                  amber: { bg: "rgba(120,53,15,0.6)", border: "rgba(245,158,11,0.4)", text: "#fcd34d" },
-                  red: { bg: "rgba(127,29,29,0.6)", border: "rgba(239,68,68,0.4)", text: "#fca5a5" },
-                  blue: { bg: "rgba(30,58,138,0.6)", border: "rgba(59,130,246,0.4)", text: "#93c5fd" },
-                  green: { bg: "rgba(20,83,45,0.6)", border: "rgba(34,197,94,0.4)", text: "#86efac" },
-                  purple: { bg: "rgba(88,28,135,0.6)", border: "rgba(168,85,247,0.4)", text: "#d8b4fe" },
+                const colors: Record<string, { bg: string, border: string, text: string, glow: string }> = {
+                  amber: { bg: "rgba(245,158,11,0.1)", border: "rgba(245,158,11,0.3)", text: "#fbbf24", glow: "rgba(245,158,11,0.2)" },
+                  red: { bg: "rgba(239,68,68,0.1)", border: "rgba(239,68,68,0.3)", text: "#f87171", glow: "rgba(239,68,68,0.2)" },
+                  blue: { bg: "rgba(59,130,246,0.1)", border: "rgba(59,130,246,0.3)", text: "#60a5fa", glow: "rgba(59,130,246,0.2)" },
+                  green: { bg: "rgba(34,197,94,0.1)", border: "rgba(34,197,94,0.3)", text: "#4ade80", glow: "rgba(34,197,94,0.2)" },
+                  purple: { bg: "rgba(168,85,247,0.1)", border: "rgba(168,85,247,0.3)", text: "#c084fc", glow: "rgba(168,85,247,0.2)" },
                 };
                 const c = colors[profile?.tagColor] || colors.amber;
                 return (
-                  <div className="inline-block mt-1 px-2 py-0.5 text-[10px] font-black uppercase rounded-sm"
-                       style={{ backgroundColor: c.bg, borderColor: c.border, borderWidth: 1, color: c.text }}>
-                    {profile?.tag || "⭐ RearMC Master"}
+                  <div className="inline-flex items-center gap-1.5 mt-1 px-3 py-1 text-[11px] font-bold uppercase tracking-widest rounded-full"
+                       style={{ backgroundColor: c.bg, borderColor: c.border, borderWidth: 1, color: c.text, boxShadow: `0 0 15px ${c.glow}` }}>
+                    <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: c.text, boxShadow: `0 0 5px ${c.text}` }} />
+                    {profile?.tag || "Master"}
                   </div>
                 );
               })()}
-              <div className="mt-2">
+              <div className="mt-3">
                 <motion.a
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95, y: 1 }}
+                  whileHover={{ scale: 1.02, backgroundColor: "rgba(255,255,255,0.15)" }}
+                  whileTap={{ scale: 0.98 }}
                   href={`https://namemc.com/profile/${name}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 px-2.5 py-1 text-[11px] font-bold text-gray-200 hover:text-white transition-all"
+                  className="inline-flex items-center gap-2 px-3 py-1.5 text-xs font-semibold text-white/80 hover:text-white transition-all rounded-full"
                   style={{
-                    background: "#555555",
-                    boxShadow: "inset 2px 2px 0 #aaaaaa, inset -2px -2px 0 #222222",
+                    background: "rgba(255,255,255,0.05)",
+                    border: "1px solid rgba(255,255,255,0.1)",
                   }}
                 >
-                  <span>NameMC</span>
-                  <ExternalLink size={10} />
+                  <ExternalLink size={12} />
+                  <span>NameMC Profile</span>
                 </motion.a>
               </div>
             </div>
           </div>
-
-          {/* Overall Points Bar (GUI Slot Style with XP Bar) */}
-          <div className="w-full flex flex-col gap-1">
-            <div
-              className="w-full p-2.5 flex items-center justify-between"
-              style={{
-                background: "#2a2a2a",
-                boxShadow: "inset 2px 2px 0 #000000, inset -2px -2px 0 #444444",
-              }}
-            >
-              <div className="flex items-center gap-2">
-                <div
-                  className="px-2 py-0.5 font-black text-sm text-black"
-                  style={{ background: "#ffaa00", boxShadow: "inset 1px 1px 0 #fff, inset -1px -1px 0 #996600" }}
-                >
-                  #{rank}
+          {/* Right/Bottom Section: Kits and Stats */}
+          <div className={`flex-1 flex flex-col w-full ${layout === 'compact' ? 'justify-center' : ''} gap-5`}>
+            
+            {/* Modern HUD Stats Block */}
+            <div className="w-full flex flex-col gap-2">
+              <div className="flex items-end justify-between px-1">
+                <div>
+                  <div className="text-[10px] font-bold text-white/40 uppercase tracking-widest mb-0.5">Overall Score</div>
+                  <div className="text-2xl font-black text-white leading-none tracking-tight">
+                    {score} <span className="text-xs text-white/50 font-semibold tracking-normal">PTS</span>
+                  </div>
                 </div>
-                <span className="text-xs font-bold text-gray-200">Overall Ranking</span>
+                <div className="text-right">
+                  <div className="text-[10px] font-bold text-white/40 uppercase tracking-widest mb-0.5">World Rank</div>
+                  <div className="text-xl font-black text-[#ffaa00] drop-shadow-[0_0_10px_rgba(255,170,0,0.3)]">#{rank}</div>
+                </div>
               </div>
-              <div className="text-right">
-                <span className="font-extrabold text-amber-400 text-sm">{score}</span>
-                <span className="text-[10px] text-gray-400 font-bold ml-1">PTS</span>
+
+              {/* Ultra-thin glowing XP Bar */}
+              <div className="w-full flex flex-col gap-1.5 mt-1">
+                <div className="w-full h-[3px] rounded-full bg-white/10 relative overflow-hidden">
+                  <motion.div
+                    initial={{ width: 0 }}
+                    animate={{ width: `${Math.min(100, Math.max(15, (score / 500) * 100))}%` }}
+                    transition={{ duration: 1, ease: "easeOut" }}
+                    className="absolute top-0 left-0 h-full bg-gradient-to-r from-emerald-500 to-cyan-400 shadow-[0_0_10px_#34d399]"
+                  />
+                </div>
+                <div className="w-full flex justify-end">
+                  <span className="text-[9px] font-bold tracking-widest text-emerald-400 uppercase">Level {Math.max(1, Math.floor(score / 50))}</span>
+                </div>
               </div>
             </div>
 
-            {/* Animated XP Bar */}
-            <div className="w-full flex items-center gap-2 px-0.5">
-              <div className="flex-1 h-2 rounded-sm bg-[#111] p-0.5 border border-[#333] relative overflow-hidden">
-                <motion.div
-                  initial={{ width: 0 }}
-                  animate={{ width: `${Math.min(100, Math.max(15, (score / 500) * 100))}%` }}
-                  transition={{ duration: 0.8, ease: "easeOut" }}
-                  className="h-full bg-gradient-to-r from-green-500 to-emerald-400 shadow-[0_0_8px_#22c55e]"
-                />
-              </div>
-              <span className="text-[10px] font-black text-green-400 drop-shadow-[0_1px_1px_#000]">LVL {Math.max(1, Math.floor(score / 50))}</span>
-            </div>
-          </div>
-
-          {/* Rated Kit Slots Grid with Item Stagger Drop-in Animation */}
+          {/* Transparent Glass Kit Slots */}
           {ratedKits.length > 0 && (
-            <div className="w-full">
-              <p className="text-[10px] font-black uppercase tracking-wider text-gray-400 mb-1.5 pl-0.5">
-                EQUIPPED TIERS ({ratedKits.length})
+            <div className="w-full mt-2">
+              <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/40 mb-3 px-1">
+                Equipped Tiers <span className="opacity-50">({ratedKits.length})</span>
               </p>
               <div
-                className="grid grid-cols-4 gap-2 p-2.5"
-                style={{
-                  background: "#8b8b8b",
-                  boxShadow: "inset 3px 3px 0 #373737, inset -3px -3px 0 #ffffff",
-                }}
+                className={`${layout === 'compact' ? 'flex flex-wrap' : layout === 'tall' ? 'grid grid-cols-5' : 'grid grid-cols-4'} gap-4`}
               >
                 {ratedKits.map((kit, index) => {
                   const tier = stats[kit.key]!;
                   return (
                     <motion.div
                       key={kit.key}
-                      initial={{ scale: 0, opacity: 0, y: -10 }}
+                      initial={{ scale: 0.8, opacity: 0, y: 10 }}
                       animate={{ scale: 1, opacity: 1, y: 0 }}
-                      transition={{ delay: index * 0.04 + 0.05, type: "spring", stiffness: 450, damping: 22 }}
-                      whileHover={{ scale: 1.15, zIndex: 20 }}
-                      className="aspect-square flex flex-col items-center justify-center relative group p-1 cursor-pointer"
+                      transition={{ delay: index * 0.05 + 0.1, type: "spring", stiffness: 400, damping: 25 }}
+                      whileHover={{ scale: 1.05, zIndex: 30 }}
+                      className={`${layout === 'compact' ? 'w-14 h-14' : 'aspect-square w-full'} flex flex-col items-center justify-center relative group cursor-pointer rounded-xl`}
                       style={{
-                        background: "#8b8b8b",
-                        boxShadow: "inset 2px 2px 0 #373737, inset -2px -2px 0 #ffffff",
+                        background: "rgba(255,255,255,0.02)",
+                        backdropFilter: "blur(8px)",
+                        border: "1px solid rgba(255,255,255,0.06)",
+                        boxShadow: "0 8px 24px rgba(0,0,0,0.2)",
                       }}
                     >
-                      <div
-                        className="w-full h-full flex flex-col items-center justify-center relative p-0.5"
-                        style={{
-                          background: "#8b8b8b",
-                          boxShadow: "inset -2px -2px 0 #373737, inset 2px 2px 0 #ffffff",
-                        }}
-                      >
-                        <KitCircle kit={kit} tier={tier} size={44} />
+                      <div className="w-full h-full flex flex-col items-center justify-center relative rounded-xl overflow-visible transition-all duration-300 group-hover:bg-white/5">
+                        <div className="absolute inset-0 bg-gradient-to-t from-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-xl pointer-events-none" />
+                        <KitCircle kit={kit} tier={tier} size={layout === 'compact' ? 40 : 50} />
+                      </div>
+                      
+                      {/* Hover Tooltip for Kit Name */}
+                      <div className="absolute -bottom-7 left-1/2 -translate-x-1/2 px-2 py-1 bg-black/90 border border-white/10 rounded text-[9px] font-black text-white uppercase tracking-widest whitespace-nowrap opacity-0 group-hover:opacity-100 group-hover:-translate-y-1 transition-all duration-200 pointer-events-none z-40 shadow-[0_4px_12px_rgba(0,0,0,0.5)]">
+                        {kit.label}
                       </div>
                     </motion.div>
                   );
@@ -640,6 +671,7 @@ const ProfileCard = forwardRef<HTMLDivElement, {
               </div>
             </div>
           )}
+          </div>
         </div>
       </motion.div>
       </div>
@@ -673,33 +705,41 @@ function LbRow({ rank, name, record, onClick }: {
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 8 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: Math.min(rank * 0.05, 0.5) }}
-      whileHover={{ scale: 1.045, backgroundColor: "rgba(255,255,255,0.055)", zIndex: 10 }}
+      initial={{ opacity: 0, y: 20, scale: 0.98 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      transition={{ delay: rank * 0.04, type: "spring", stiffness: 350, damping: 25 }}
+      whileHover={{ 
+        scale: 1.04, 
+        backgroundColor: "rgba(255,255,255,0.08)", 
+        boxShadow: "0 20px 50px -10px rgba(0,0,0,0.8)", 
+        zIndex: 50, 
+        borderColor: "rgba(255,255,255,0.2)" 
+      }}
       whileTap={{ scale: 0.98 }}
       onClick={onClick}
-      className="relative flex items-center gap-4 py-2.5 pr-5 rounded-xl cursor-pointer transition-all duration-200 border border-transparent hover:border-white/10 overflow-visible mb-1.5 group"
-      style={{ background: "rgba(255,255,255,0.02)" }}
+      className="relative flex items-center gap-4 sm:gap-5 py-3 pr-4 sm:pr-6 rounded-2xl cursor-pointer transition-colors duration-300 border border-white/5 mb-4 group"
+      style={{ 
+        background: "linear-gradient(90deg, rgba(20,20,20,0.6) 0%, rgba(10,10,10,0.4) 100%)", 
+        backdropFilter: "blur(16px)" 
+      }}
     >
       {/* Rank Block (Skewed background for Top 3) */}
-      <div className="w-[68px] h-full absolute left-0 top-0 bottom-0 overflow-hidden rounded-l-xl" style={{ zIndex: 0 }}>
+      <div className="w-[72px] h-full absolute left-0 top-0 bottom-0 overflow-hidden rounded-l-2xl" style={{ zIndex: 0 }}>
         {isTop3 && (
           <div 
-            className="w-full h-full"
+            className="w-full h-full opacity-90 group-hover:opacity-100 transition-opacity"
             style={{ 
               background: rankBg, 
-              clipPath: "polygon(0 0, 100% 0, 80% 100%, 0% 100%)" 
+              clipPath: "polygon(0 0, 100% 0, 75% 100%, 0% 100%)" 
             }} 
           />
         )}
       </div>
 
       {/* Rank Number */}
-      <div className="w-[60px] flex-shrink-0 flex justify-center relative z-10 pl-2">
+      <div className="w-[60px] flex-shrink-0 flex justify-center relative z-10 pl-3">
         <span 
-          className={`font-black italic text-2xl ${isTop3 ? 'text-white' : 'text-gray-200'}`}
-          style={isTop3 ? { textShadow: "2px 2px 0px rgba(0,0,0,0.4)" } : {}}
+          className={`font-black italic text-2xl ${isTop3 ? 'text-white drop-shadow-md' : 'text-gray-400 group-hover:text-gray-200 transition-colors'}`}
         >
           {rank}.
         </span>
@@ -717,7 +757,7 @@ function LbRow({ rank, name, record, onClick }: {
           style={{ width: "100%", height: "100%", objectFit: "contain", imageRendering: "pixelated" }}
           onError={(e) => {
             const img = e.target as HTMLImageElement;
-            img.src = `https://minotar.net/helm/${name}/64.png`;
+            img.src = fallbackSrc(64, name);
             img.style.objectFit = "cover";
             img.style.imageRendering = "pixelated";
             img.style.borderRadius = "4px";
@@ -774,71 +814,86 @@ interface ColumnData {
   subtiers: ColumnSubtierData[];
 }
 
-/* ─────────────────────────────────── Column (Category view) ─────────── */
 function TierColumn({ col, idx, onPlayerClick }: {
   col: ColumnData; idx: number;
   onPlayerClick: (name: string) => void;
 }) {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 16 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: idx * 0.07 }}
-      className="flex flex-col min-w-[200px] flex-1 rounded-2xl overflow-hidden"
-      style={{ border: "1px solid rgba(255,255,255,0.08)" }}
+      initial={{ opacity: 0, y: 30, scale: 0.95 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      transition={{ delay: idx * 0.1, type: "spring", stiffness: 350, damping: 25 }}
+      className="flex flex-col min-w-[220px] flex-1 rounded-2xl overflow-hidden relative group"
+      style={{ 
+        background: "linear-gradient(180deg, rgba(20,20,20,0.6) 0%, rgba(10,10,10,0.8) 100%)",
+        backdropFilter: "blur(16px)",
+        border: "1px solid rgba(255,255,255,0.08)",
+        boxShadow: `0 10px 30px rgba(0,0,0,0.5), inset 0 0 20px ${col.color}05`
+      }}
     >
+      {/* Subtle Glow Behind Column */}
+      <div 
+        className="absolute top-0 left-1/2 -translate-x-1/2 w-[150%] h-32 opacity-20 pointer-events-none blur-3xl transition-opacity duration-500 group-hover:opacity-40" 
+        style={{ background: `radial-gradient(ellipse at top, ${col.color}, transparent 70%)` }}
+      />
+
       {/* Header */}
-      <div className="flex items-center gap-2.5 px-4 py-3" style={{ background: col.hdrBg }}>
-        <span className="text-lg leading-none">🏆</span>
-        <span className="font-bold text-[15px]" style={{ color: col.color }}>{col.label}</span>
-        <span className="ml-auto text-xs font-bold px-2 py-0.5 rounded-full"
-          style={{ background: `${col.color}22`, color: col.color }}>{col.totalPlayers}</span>
+      <div 
+        className="flex items-center gap-3 px-4 py-4 relative z-10" 
+        style={{ background: `linear-gradient(90deg, ${col.color}22 0%, transparent 100%)`, borderBottom: "1px solid rgba(255,255,255,0.05)" }}
+      >
+        <span className="text-xl leading-none drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">🏆</span>
+        <span className="font-black text-[16px] tracking-wide" style={{ color: col.color, textShadow: `0 0 10px ${col.color}66` }}>{col.label}</span>
+        <span className="ml-auto text-[10px] font-black px-2 py-0.5 rounded-full"
+          style={{ background: `${col.color}33`, color: col.color, boxShadow: `0 0 10px ${col.color}44` }}>{col.totalPlayers} PLAYERS</span>
       </div>
-      <div className="h-px" style={{ background: "rgba(255,255,255,0.08)" }} />
 
       {/* Player rows grouped by subtier */}
-      <div className="flex-1 bg-[#0d0d0d] p-2 space-y-3">
+      <div className="flex-1 p-3 space-y-4 relative z-10 overflow-y-auto custom-scrollbar">
         {col.subtiers.map((sub) => {
           if (sub.players.length === 0) return null;
           const tierColor = TIER_COLOR[sub.tier] ?? "#aaa";
           const isHigh = sub.tier.startsWith("HT");
           return (
-            <div key={sub.tier} className="space-y-1">
+            <div key={sub.tier} className="space-y-1.5">
               {/* Sub-tier Header */}
-              <div className="flex items-center justify-between px-2 py-1 rounded bg-white/[0.04] border border-white/5">
-                <span className="text-[10px] font-black tracking-wider uppercase flex items-center gap-1.5" style={{ color: tierColor }}>
-                  <span className="w-1.5 h-1.5 rounded-full" style={{ background: tierColor }} />
-                  {isHigh ? "HIGH TIER" : "LOW TIER"} ({sub.tier})
+              <div 
+                className="flex items-center justify-between px-2.5 py-1.5 rounded-lg border"
+                style={{ background: "rgba(0,0,0,0.4)", borderColor: `${tierColor}33`, boxShadow: `inset 0 0 10px ${tierColor}11` }}
+              >
+                <span className="text-[10px] font-black tracking-widest uppercase flex items-center gap-2" style={{ color: tierColor, textShadow: `0 0 8px ${tierColor}88` }}>
+                  <span className="w-1.5 h-1.5 rounded-full" style={{ background: tierColor, boxShadow: `0 0 6px ${tierColor}` }} />
+                  {isHigh ? "HIGH TIER" : "LOW TIER"} <span className="opacity-70">({sub.tier})</span>
                 </span>
-                <span className="text-[9px] font-bold text-gray-500">{sub.players.length}</span>
+                <span className="text-[10px] font-bold" style={{ color: `${tierColor}aa` }}>{sub.players.length}</span>
               </div>
 
               {/* Players in this subtier */}
-              <div className="space-y-0.5">
+              <div className="space-y-1">
                 {sub.players.map(({ name: p, score }, i) => (
                   <motion.button
                     key={p}
-                    initial={{ opacity: 0, y: 4 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: i * 0.025 }}
-                    whileHover={{ scale: 1.03, x: 3 }}
-                    whileTap={{ scale: 0.97 }}
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: idx * 0.1 + i * 0.03, type: "spring", stiffness: 400, damping: 25 }}
+                    whileHover={{ scale: 1.05, x: 4, backgroundColor: "rgba(255,255,255,0.1)", zIndex: 20 }}
+                    whileTap={{ scale: 0.98 }}
                     onClick={() => onPlayerClick(p)}
-                    className="w-full flex items-center gap-2 px-2.5 py-1.5 rounded-lg hover:bg-white/8 transition-colors group text-left"
+                    className="w-full relative flex items-center gap-3 px-3 py-2 rounded-xl transition-colors duration-200 group text-left border border-transparent hover:border-white/20 hover:shadow-[0_8px_20px_rgba(0,0,0,0.6)]"
                   >
-                    <div className="w-7 h-7 rounded shrink-0 overflow-hidden bg-[#181818] ring-1 ring-white/10 group-hover:ring-white/30 transition-colors">
+                    <div className="w-8 h-8 rounded-md shrink-0 overflow-hidden bg-[#111] ring-1 ring-white/10 group-hover:ring-white/30 transition-colors shadow-inner">
                       {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
-                        src={`https://minotar.net/helm/${p}/32.png`} alt={p}
-                        className="w-full h-full object-cover"
-                        onError={e => { (e.target as HTMLImageElement).src = fallbackSrc(32); }}
-                      />
-                    </div>
-                    <span className="text-xs font-semibold text-gray-300 group-hover:text-white transition-colors truncate flex-1">{p}</span>
+                        <img
+                          src={`https://minotar.net/helm/${p}/32.png`} alt={p}
+                          className="w-full h-full object-cover scale-[1.1] group-hover:scale-100 transition-transform duration-300"
+                          onError={e => { (e.target as HTMLImageElement).src = fallbackSrc(32, p); }}
+                        />
+                      </div>
+                    <span className="text-xs font-bold text-gray-300 group-hover:text-white transition-colors truncate flex-1 tracking-wide">{p}</span>
                     
                     {/* Sub-tier Badge */}
-                    <span className="text-[9px] font-extrabold px-1.5 py-0.5 rounded shrink-0 font-mono"
-                          style={{ background: `${tierColor}20`, color: tierColor, border: `1px solid ${tierColor}40` }}>
+                    <span className="text-[10px] font-black px-1.5 py-0.5 rounded shrink-0"
+                          style={{ background: `${tierColor}15`, color: tierColor, border: `1px solid ${tierColor}40`, textShadow: `0 0 5px ${tierColor}aa` }}>
                       {sub.tier}
                     </span>
                   </motion.button>

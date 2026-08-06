@@ -65,3 +65,44 @@ export async function updateTiers(tiers: Record<string, PlayerData>) {
   revalidatePath("/tierlist");
   return { success: true };
 }
+
+export async function fetchProfiles() {
+  const { getProfiles } = await import("@/lib/kv");
+  return await getProfiles();
+}
+
+export async function updatePlayerCustomizationPermissions(username: string, permissions: any, customizationUpdate?: any) {
+  await verifyAuth();
+  const { getProfiles, saveProfiles } = await import("@/lib/kv");
+  const profiles = await getProfiles();
+  const existing = profiles[username] || {};
+  profiles[username] = {
+    ...existing,
+    ...(customizationUpdate || {}),
+    permissions: permissions,
+    updatedAt: Date.now(),
+  };
+  await saveProfiles(profiles);
+  revalidatePath("/tierlist");
+  return { success: true, profile: profiles[username] };
+}
+
+export async function updateSinglePlayerTiers(username: string, tiers: PlayerData) {
+  await verifyAuth();
+  const { getTiers, saveTiers } = await import("@/lib/kv");
+  const allTiers = await getTiers();
+  allTiers[username] = tiers;
+  await saveTiers(allTiers);
+  revalidatePath("/tierlist");
+  return { success: true };
+}
+
+export async function deleteSinglePlayerTiers(username: string) {
+  await verifyAuth();
+  const { getTiers, saveTiers } = await import("@/lib/kv");
+  const allTiers = await getTiers();
+  delete allTiers[username];
+  await saveTiers(allTiers);
+  revalidatePath("/tierlist");
+  return { success: true };
+}

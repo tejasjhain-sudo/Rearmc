@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Search, RefreshCw, X, ExternalLink, Settings, Edit3, Volume2, VolumeX } from "lucide-react";
 import { ProfileCustomizationModal } from "./ProfileCustomizationModal";
 import { ClaimProfileModal } from "./ClaimProfileModal";
-import { LightningIntroEffect as ImportedLightning, EnchantmentParticles as ImportedEnchantment, FireParticles, CherryBlossomParticles, VoidGalaxyIntro, DarkDragonAura, CyberGlitchIntro, ShatteredGlassIntro, HolyLightIntro, CreeperBlastIntro, TntPopIntro } from "./ProfileEffects";
+import { SupernovaIntro, DimensionalPortalIntro, CyberMatrixIntro, CelestialEclipseIntro, EnderDragonVoidIntro, MinecraftSteveSlashIntro, DiamondArmorIntro, HerobrineHorrorIntro, Entity303GlitchIntro, EndermanTeleportIntro, WardenRoarIntro, WitherBossIntro, ZombieHordeIntro, SkeletonArcherIntro, EnchantmentParticles as ImportedEnchantment, FireParticles, CherryBlossomParticles, DarkDragonAura, ElectricParticles } from "./ProfileEffects";
 
 /* ─────────────────────────────────── Types ──────────────────────────── */
 type Category = "sword" | "axe" | "nethpot" | "dpot" | "uhc" | "smp" | "crystal" | "mace";
@@ -327,7 +327,6 @@ const ProfileCard = forwardRef<HTMLDivElement, {
   };
 
   const themeStyles = getThemeStyles();
-  const layout = profile?.cardLayout || "standard";
   const [isMuted, setIsMuted] = useState(false);
   const [lyrics, setLyrics] = useState("");
   const audioRef = useRef<HTMLAudioElement>(null);
@@ -386,11 +385,12 @@ const ProfileCard = forwardRef<HTMLDivElement, {
     }
     return () => { isCurrent = false; };
   }, [profile?.musicName]);
+
   const layoutStyles = {
-    padding: layout === "tall" ? "p-5 sm:p-10" : layout === "compact" ? "p-4 sm:p-6" : "p-5 sm:p-8",
-    gap: layout === "tall" ? "gap-6 sm:gap-8" : layout === "compact" ? "gap-4 sm:gap-5" : "gap-5 sm:gap-6",
-    avatar: layout === "tall" ? 96 : layout === "compact" ? 48 : 64,
-    width: layout === "tall" ? "w-[95vw] sm:max-w-[560px]" : layout === "compact" ? "w-[95vw] sm:max-w-[650px]" : "w-[95vw] sm:max-w-[500px]",
+    padding: "p-5 sm:p-8",
+    gap: "gap-5 sm:gap-6",
+    avatar: 64,
+    width: previewMode ? "w-full" : "w-[95vw] sm:max-w-[500px]",
   };
 
   useEffect(() => {
@@ -422,12 +422,12 @@ const ProfileCard = forwardRef<HTMLDivElement, {
           initial={{ opacity: 0, x: -100, scale: 0.8 }}
           animate={{ opacity: 1, x: 0, scale: 1 }}
           transition={{ delay: 0.15, type: "spring", stiffness: 200, damping: 20 }}
-          className={`hidden md:block absolute bottom-0 pointer-events-none drop-shadow-[0_20px_50px_rgba(0,0,0,0.9)] z-0 ${layout === 'tall' ? '-left-[320px] xl:-left-[400px]' : '-left-[280px] xl:-left-[350px]'}`}
+          className="hidden md:block absolute bottom-0 pointer-events-none drop-shadow-[0_20px_50px_rgba(0,0,0,0.9)] z-0 -left-[280px] xl:-left-[350px]"
         >
           <img 
             src={`https://visage.surgeplay.com/full/512/${name}`}
             alt={`${name} 3D Skin`}
-            className={`${layout === 'tall' ? 'w-[280px] xl:w-[350px]' : 'w-[240px] xl:w-[300px]'} object-contain drop-shadow-[0_0_30px_rgba(255,255,255,0.15)]`}
+            className="w-[240px] xl:w-[300px] object-contain drop-shadow-[0_0_30px_rgba(255,255,255,0.15)]"
             onError={(e) => {
               const isAlex = name.length % 2 !== 0;
               (e.target as HTMLImageElement).src = `https://visage.surgeplay.com/full/512/${isAlex ? 'Alex' : 'MHF_Steve'}`;
@@ -456,7 +456,7 @@ const ProfileCard = forwardRef<HTMLDivElement, {
               : { type: "spring", stiffness: 420, damping: 26 }
           }
           onClick={e => e.stopPropagation()}
-          className={`relative ${layoutStyles.width} ${!previewMode ? layoutStyles.padding : 'p-3'} select-none overflow-y-auto overflow-x-hidden custom-scrollbar max-h-[90vh] rounded-2xl flex flex-col z-10`}
+          className={`relative ${layoutStyles.width} ${!previewMode ? layoutStyles.padding : 'p-5'} select-none overflow-y-auto overflow-x-hidden custom-scrollbar max-h-[90vh] rounded-2xl flex flex-col z-10`}
           style={{
             background: "linear-gradient(135deg, rgba(20,20,20,0.7) 0%, rgba(5,5,5,0.85) 100%)",
             backdropFilter: "blur(24px)",
@@ -465,6 +465,108 @@ const ProfileCard = forwardRef<HTMLDivElement, {
             boxShadow: "0 30px 60px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.1)",
           }}
         >
+          {/* Holographic Foil Prism Card Overlay */}
+          {profile?.cardTheme === "holographic_prism" && (
+            <motion.div
+              className="absolute inset-0 rounded-2xl pointer-events-none z-20 mix-blend-color-dodge opacity-70"
+              style={{
+                backgroundImage: "linear-gradient(115deg, transparent 20%, rgba(255,0,128,0.6) 40%, rgba(0,255,255,0.7) 60%, rgba(255,255,0,0.6) 80%, transparent 100%)",
+                backgroundSize: "200% 200%",
+              }}
+              animate={{
+                backgroundPosition: ["0% 0%", "100% 100%", "0% 0%"],
+              }}
+              transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
+            />
+          )}
+
+          {/* Glitch Matrix RGB Shifter Overlay */}
+          {profile?.cardTheme === "glitch_matrix" && (
+            <motion.div
+              className="absolute inset-0 rounded-2xl pointer-events-none z-20 border-2 border-emerald-500/50 shadow-[0_0_30px_#10b981]"
+              style={{
+                backgroundImage: "repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(16,185,129,0.15) 3px, rgba(16,185,129,0.15) 6px)",
+              }}
+              animate={{
+                x: [0, -3, 3, -2, 0],
+                opacity: [0.8, 1, 0.7, 1],
+              }}
+              transition={{ duration: 0.2, repeat: Infinity, ease: "linear" }}
+            />
+          )}
+
+          {/* Herobrine Blood Void Card Overlay */}
+          {profile?.cardTheme === "herobrine_void" && (
+            <motion.div
+              className="absolute inset-0 rounded-2xl pointer-events-none z-20 border-2 border-red-600/80 shadow-[inset_0_0_60px_#7f1d1d,0_0_40px_#ef4444]"
+              style={{
+                backgroundImage: "radial-gradient(ellipse at center, rgba(127,29,29,0.4) 0%, rgba(0,0,0,0.9) 100%)",
+              }}
+              animate={{ opacity: [0.7, 1, 0.7] }}
+              transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
+            />
+          )}
+
+          {/* Sculk Warden Deep Darkness Card Overlay */}
+          {profile?.cardTheme === "sculk_warden" && (
+            <motion.div
+              className="absolute inset-0 rounded-2xl pointer-events-none z-20 border-2 border-cyan-500/80 shadow-[inset_0_0_70px_#0e7490,0_0_40px_#06b6d4]"
+              style={{
+                backgroundImage: "radial-gradient(circle at 50% 50%, rgba(8,145,178,0.3) 0%, rgba(1,16,29,0.95) 100%)",
+              }}
+              animate={{ opacity: [0.8, 1, 0.8] }}
+              transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+            />
+          )}
+
+          {/* Enderman Void Pulse Card Overlay */}
+          {profile?.cardTheme === "enderman_teleport" && (
+            <motion.div
+              className="absolute inset-0 rounded-2xl pointer-events-none z-20 border-2 border-fuchsia-500/80 shadow-[inset_0_0_60px_#701a75,0_0_40px_#d946ef]"
+              style={{
+                backgroundImage: "radial-gradient(circle at 50% 50%, rgba(192,132,252,0.25) 0%, rgba(13,7,20,0.95) 100%)",
+              }}
+              animate={{ opacity: [0.7, 1, 0.7] }}
+              transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
+            />
+          )}
+
+          {/* Wither Boss Nether Flame Card Overlay */}
+          {profile?.cardTheme === "wither_boss" && (
+            <motion.div
+              className="absolute inset-0 rounded-2xl pointer-events-none z-20 border-2 border-blue-600/80 shadow-[inset_0_0_60px_#1e3a8a,0_0_40px_#3b82f6]"
+              style={{
+                backgroundImage: "radial-gradient(circle at 50% 50%, rgba(59,130,246,0.3) 0%, rgba(5,5,15,0.95) 100%)",
+              }}
+              animate={{ opacity: [0.7, 1, 0.7] }}
+              transition={{ duration: 1.6, repeat: Infinity, ease: "easeInOut" }}
+            />
+          )}
+
+          {/* Steve Diamond Armor Card Overlay */}
+          {profile?.cardTheme === "steve_diamond" && (
+            <motion.div
+              className="absolute inset-0 rounded-2xl pointer-events-none z-20 border-2 border-cyan-300 shadow-[inset_0_0_50px_rgba(56,189,248,0.4),0_0_35px_#38bdf8]"
+              style={{
+                backgroundImage: "linear-gradient(135deg, rgba(56,189,248,0.2) 0%, rgba(2,19,29,0.9) 100%)",
+              }}
+              animate={{ opacity: [0.85, 1, 0.85] }}
+              transition={{ duration: 2.2, repeat: Infinity, ease: "easeInOut" }}
+            />
+          )}
+
+          {/* Supernova Cosmic Galaxy Card Overlay */}
+          {profile?.cardTheme === "supernova_galaxy" && (
+            <motion.div
+              className="absolute inset-0 rounded-2xl pointer-events-none z-20 border-2 border-purple-500/80 shadow-[inset_0_0_80px_rgba(168,85,247,0.5),0_0_45px_#a855f7]"
+              style={{
+                backgroundImage: "radial-gradient(circle at 50% 50%, rgba(217,70,239,0.3) 0%, rgba(3,0,8,0.95) 100%)",
+              }}
+              animate={{ opacity: [0.8, 1, 0.8] }}
+              transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
+            />
+          )}
+
           {/* Subtle inner glow */}
           <div className="absolute inset-0 rounded-2xl pointer-events-none" style={{ boxShadow: "inset 0 0 100px rgba(255,255,255,0.02)" }} />
         {/* Hidden Audio Element */}
@@ -475,22 +577,30 @@ const ProfileCard = forwardRef<HTMLDivElement, {
         )}
 
         {/* Intro Animation */}
-        {profile?.introEffect === "cyber_glitch" ? <CyberGlitchIntro /> :
-         profile?.introEffect === "shattered_glass" ? <ShatteredGlassIntro /> :
-         profile?.introEffect === "holy_light" ? <HolyLightIntro /> :
-         profile?.introEffect === "void_galaxy" ? <VoidGalaxyIntro /> : 
-         profile?.introEffect === "creeper_blast" ? <CreeperBlastIntro /> :
-         profile?.introEffect === "tnt_pop" ? <TntPopIntro /> :
-         profile?.introEffect !== "none" ? <ImportedLightning /> : null}
+        {profile?.introEffect === "supernova" ? <SupernovaIntro /> :
+         profile?.introEffect === "portal" ? <DimensionalPortalIntro /> :
+         profile?.introEffect === "cyber_matrix" ? <CyberMatrixIntro /> :
+         profile?.introEffect === "eclipse" ? <CelestialEclipseIntro /> :
+         profile?.introEffect === "ender_dragon" ? <EnderDragonVoidIntro /> :
+         profile?.introEffect === "steve_slash" ? <MinecraftSteveSlashIntro /> :
+         profile?.introEffect === "diamond_armor" ? <DiamondArmorIntro /> :
+         profile?.introEffect === "herobrine_horror" ? <HerobrineHorrorIntro /> :
+         profile?.introEffect === "entity303_glitch" ? <Entity303GlitchIntro /> :
+         profile?.introEffect === "enderman" ? <EndermanTeleportIntro /> :
+         profile?.introEffect === "warden" ? <WardenRoarIntro /> :
+         profile?.introEffect === "wither" ? <WitherBossIntro /> :
+         profile?.introEffect === "zombie" ? <ZombieHordeIntro /> :
+         profile?.introEffect === "skeleton" ? <SkeletonArcherIntro /> : null}
 
         {/* Continuous Particles */}
         {profile?.particles === "fire" ? <FireParticles /> :
          profile?.particles === "cherry_blossom" ? <CherryBlossomParticles /> :
          profile?.particles === "dark_dragon_aura" ? <DarkDragonAura /> :
+         profile?.particles === "electric_sparks" ? <ElectricParticles /> :
          profile?.particles !== "none" ? <ImportedEnchantment /> : null}
 
         {/* Header Bar */}
-        <div className={`flex items-center justify-between mb-4 relative z-10`}>
+        <div className="flex items-center justify-between mb-4 relative z-10">
           <div className="flex items-center gap-3">
             <div className="w-2 h-2 rounded-full shadow-[0_0_8px_#fff]" style={{ backgroundColor: themeStyles.text || "#fff" }} />
             <span className="font-extrabold text-sm tracking-[0.2em] uppercase text-white/80">
@@ -524,11 +634,10 @@ const ProfileCard = forwardRef<HTMLDivElement, {
 
         {/* Inner Content Area */}
         <div
-          className={`flex ${layout === 'compact' ? 'flex-row items-center' : 'flex-col items-center'} relative z-10 flex-1 gap-6`}
-          style={{ minHeight: layout === "tall" ? "620px" : layout === "standard" ? "480px" : "auto" }}
+          className="flex flex-col items-center relative z-10 flex-1 gap-6 min-h-[460px]"
         >
           {/* Top Section: Avatar Slot + Player Info */}
-          <div className={`w-full flex ${layout === 'compact' ? 'flex-col items-center w-[160px] shrink-0 gap-4' : 'flex-row items-center gap-5'}`}>
+          <div className="w-full flex flex-row items-center gap-5">
             {/* Holographic Avatar Display */}
             <div
               className="w-24 h-24 shrink-0 p-1 rounded-xl flex items-center justify-center relative group"
@@ -556,7 +665,7 @@ const ProfileCard = forwardRef<HTMLDivElement, {
             </div>
 
             {/* Name + Details */}
-            <div className={`flex-1 min-w-0 ${layout === 'compact' ? 'text-center flex flex-col items-center' : ''}`}>
+            <div className="flex-1 min-w-0">
               <h2 className="text-3xl font-black text-white truncate tracking-tight drop-shadow-[0_2px_10px_rgba(255,255,255,0.2)] mb-1">
                 {name}
               </h2>
@@ -597,7 +706,7 @@ const ProfileCard = forwardRef<HTMLDivElement, {
             </div>
           </div>
           {/* Right/Bottom Section: Kits and Stats */}
-          <div className={`flex-1 flex flex-col w-full ${layout === 'compact' ? 'justify-center' : ''} gap-5`}>
+          <div className="flex-1 flex flex-col w-full gap-5">
             
             {/* Modern HUD Stats Block */}
             <div className="w-full flex flex-col gap-2">
@@ -636,9 +745,7 @@ const ProfileCard = forwardRef<HTMLDivElement, {
               <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/40 mb-3 px-1">
                 Equipped Tiers <span className="opacity-50">({ratedKits.length})</span>
               </p>
-              <div
-                className={`${layout === 'compact' ? 'flex flex-wrap' : layout === 'tall' ? 'grid grid-cols-5' : 'grid grid-cols-4'} gap-4`}
-              >
+              <div className="grid grid-cols-4 gap-4">
                 {ratedKits.map((kit, index) => {
                   const tier = stats[kit.key]!;
                   return (
@@ -648,7 +755,7 @@ const ProfileCard = forwardRef<HTMLDivElement, {
                       animate={{ scale: 1, opacity: 1, y: 0 }}
                       transition={{ delay: index * 0.05 + 0.1, type: "spring", stiffness: 400, damping: 25 }}
                       whileHover={{ scale: 1.05, zIndex: 30 }}
-                      className={`${layout === 'compact' ? 'w-14 h-14' : 'aspect-square w-full'} flex flex-col items-center justify-center relative group cursor-pointer rounded-xl`}
+                      className="aspect-square w-full flex flex-col items-center justify-center relative group cursor-pointer rounded-xl"
                       style={{
                         background: "rgba(255,255,255,0.02)",
                         backdropFilter: "blur(8px)",
@@ -658,7 +765,7 @@ const ProfileCard = forwardRef<HTMLDivElement, {
                     >
                       <div className="w-full h-full flex flex-col items-center justify-center relative rounded-xl overflow-visible transition-all duration-300 group-hover:bg-white/5">
                         <div className="absolute inset-0 bg-gradient-to-t from-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-xl pointer-events-none" />
-                        <KitCircle kit={kit} tier={tier} size={layout === 'compact' ? 40 : 50} />
+                        <KitCircle kit={kit} tier={tier} size={50} />
                       </div>
                       
                       {/* Hover Tooltip for Kit Name */}

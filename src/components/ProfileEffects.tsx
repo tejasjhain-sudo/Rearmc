@@ -4,12 +4,12 @@
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 
-/* ─────────────────────────────────── Lightning ───────────────────────────── */
-export function LightningIntroEffect() {
+/* ─────────────────────────────────── 1. Supernova Burst ───────────────────────────── */
+export function SupernovaIntro() {
   const [active, setActive] = useState(true);
 
   useEffect(() => {
-    const timer = setTimeout(() => setActive(false), 2500);
+    const timer = setTimeout(() => setActive(false), 2600);
     return () => clearTimeout(timer);
   }, []);
 
@@ -17,45 +17,630 @@ export function LightningIntroEffect() {
 
   return (
     <motion.div
-      className="absolute inset-0 z-40 pointer-events-none rounded-2xl overflow-hidden flex items-center justify-center"
+      className="absolute inset-0 z-40 pointer-events-none rounded-2xl overflow-hidden flex items-center justify-center bg-[#030008]"
       initial={{ opacity: 1 }}
       animate={{ opacity: [1, 1, 0] }}
-      transition={{ duration: 2.5, times: [0, 0.85, 1] }}
+      transition={{ duration: 2.6, times: [0, 0.85, 1] }}
     >
       <motion.div
-        className="absolute inset-0 bg-[#080b14]"
-        animate={{ opacity: [0.95, 0.3, 0.9, 0.1, 0.8, 0] }}
-        transition={{ duration: 2.2, times: [0, 0.2, 0.4, 0.6, 0.8, 1] }}
+        className="w-40 h-40 rounded-full border-4 border-cyan-400 shadow-[0_0_100px_#38bdf8] bg-cyan-400/20"
+        animate={{ scale: [3, 0.1, 4.5], rotate: [0, 180, 360], opacity: [0.8, 1, 0] }}
+        transition={{ duration: 2.2, times: [0, 0.35, 1], ease: "easeInOut" }}
       />
       <motion.div
-        className="absolute inset-0 bg-cyan-100"
-        animate={{ opacity: [0, 0.8, 0, 0.95, 0, 0.7, 0] }}
-        transition={{ duration: 2.2, times: [0, 0.25, 0.3, 0.55, 0.6, 0.75, 1] }}
+        className="absolute inset-0 bg-white"
+        animate={{ opacity: [0, 0, 1, 0] }}
+        transition={{ duration: 2.2, times: [0, 0.33, 0.45, 1] }}
       />
-      <motion.svg
-        className="absolute inset-0 w-full h-full text-cyan-300 drop-shadow-[0_0_15px_#38bdf8]"
-        viewBox="0 0 360 420" fill="none" stroke="currentColor" strokeWidth="4"
-        animate={{ opacity: [0, 1, 0, 1, 0, 0.8, 0], scale: [0.95, 1.05, 0.98, 1.02, 1] }}
-        transition={{ duration: 2.2, times: [0, 0.2, 0.3, 0.55, 0.7, 0.85, 1] }}
-      >
-        <path d="M 180 0 L 165 90 L 195 120 L 140 210 L 175 230 L 130 330 L 160 340 L 120 420" />
-      </motion.svg>
+      {Array.from({ length: 32 }).map((_, i) => {
+        const angle = (i / 32) * Math.PI * 2;
+        return (
+          <motion.div
+            key={i}
+            className="absolute w-2 h-2 bg-cyan-200 rounded-full shadow-[0_0_15px_#38bdf8]"
+            initial={{ x: 0, y: 0, opacity: 0, scale: 0 }}
+            animate={{
+              x: [0, Math.cos(angle) * 350],
+              y: [0, Math.sin(angle) * 350],
+              opacity: [0, 0, 1, 0],
+              scale: [0, 1, 2.5, 0],
+            }}
+            transition={{ duration: 2.2, times: [0, 0.35, 0.5, 1], ease: "easeOut" }}
+          />
+        );
+      })}
     </motion.div>
   );
 }
 
-/* ─────────────────────────────────── Enchantment ───────────────────────────── */
+/* ─────────────────────────────────── 2. Dimensional Portal ───────────────────────────── */
+export function DimensionalPortalIntro() {
+  const [active, setActive] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setActive(false), 2600);
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (!active) return null;
+
+  return (
+    <motion.div
+      className="absolute inset-0 z-40 pointer-events-none rounded-2xl overflow-hidden flex items-center justify-center bg-[#020617]"
+      initial={{ opacity: 1 }}
+      animate={{ opacity: [1, 1, 0] }}
+      transition={{ duration: 2.6, times: [0, 0.85, 1] }}
+    >
+      {[1, 2, 3].map((ring) => (
+        <motion.div
+          key={ring}
+          className="absolute rounded-full border-2 border-indigo-500/60 shadow-[0_0_50px_#6366f1]"
+          style={{ width: ring * 120, height: ring * 120 }}
+          animate={{
+            rotate: ring % 2 === 0 ? [0, 360] : [360, 0],
+            scale: [0.2, 1.4, 0.8, 2],
+            opacity: [0, 0.8, 1, 0],
+          }}
+          transition={{ duration: 2.2, ease: "easeInOut", delay: ring * 0.1 }}
+        />
+      ))}
+      <motion.div
+        className="w-24 h-24 rounded-full bg-gradient-to-r from-violet-600 via-indigo-500 to-cyan-400 blur-md shadow-[0_0_80px_#818cf8]"
+        animate={{ scale: [0, 2.5, 0], rotate: [0, 720] }}
+        transition={{ duration: 2.2, ease: "easeInOut" }}
+      />
+    </motion.div>
+  );
+}
+
+/* ─────────────────────────────────── 3. Cyber Matrix Grid ───────────────────────────── */
+export function CyberMatrixIntro() {
+  const [active, setActive] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setActive(false), 2400);
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (!active) return null;
+
+  return (
+    <motion.div
+      className="absolute inset-0 z-40 pointer-events-none rounded-2xl overflow-hidden bg-[#030712] flex items-center justify-center"
+      initial={{ opacity: 1 }}
+      animate={{ opacity: [1, 1, 0] }}
+      transition={{ duration: 2.4, times: [0, 0.85, 1] }}
+    >
+      <motion.div
+        className="absolute inset-0 opacity-40"
+        style={{
+          backgroundImage: `linear-gradient(to right, rgba(16,185,129,0.3) 1px, transparent 1px),
+                            linear-gradient(to bottom, rgba(16,185,129,0.3) 1px, transparent 1px)`,
+          backgroundSize: "40px 40px",
+        }}
+        animate={{ backgroundPosition: ["0px 0px", "40px 80px"], opacity: [0, 0.8, 0] }}
+        transition={{ duration: 2.2, ease: "linear" }}
+      />
+      <motion.div
+        className="absolute w-full h-1 bg-emerald-400 shadow-[0_0_25px_#34d399]"
+        animate={{ top: ["0%", "100%", "0%"], opacity: [0, 1, 0] }}
+        transition={{ duration: 2, ease: "easeInOut" }}
+      />
+      {Array.from({ length: 20 }).map((_, i) => (
+        <motion.div
+          key={i}
+          className="absolute w-1 h-12 bg-gradient-to-b from-emerald-300 to-transparent shadow-[0_0_10px_#10b981]"
+          style={{ left: `${(i * 5) % 100}%` }}
+          initial={{ y: -100, opacity: 0 }}
+          animate={{ y: [ -100, 450 ], opacity: [0, 1, 0] }}
+          transition={{ duration: 1.5, delay: (i % 5) * 0.1, ease: "linear" }}
+        />
+      ))}
+    </motion.div>
+  );
+}
+
+/* ─────────────────────────────────── 4. Celestial Eclipse ───────────────────────────── */
+export function CelestialEclipseIntro() {
+  const [active, setActive] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setActive(false), 2600);
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (!active) return null;
+
+  return (
+    <motion.div
+      className="absolute inset-0 z-40 pointer-events-none rounded-2xl overflow-hidden flex items-center justify-center bg-[#070510]"
+      initial={{ opacity: 1 }}
+      animate={{ opacity: [1, 1, 0] }}
+      transition={{ duration: 2.6, times: [0, 0.85, 1] }}
+    >
+      <motion.div
+        className="w-56 h-56 rounded-full bg-amber-400/30 blur-2xl shadow-[0_0_120px_#f59e0b]"
+        animate={{ scale: [0.5, 1.4, 0.8], opacity: [0, 1, 0] }}
+        transition={{ duration: 2.3, ease: "easeInOut" }}
+      />
+      <motion.div
+        className="w-40 h-40 rounded-full bg-[#070510] border-2 border-amber-300/40 shadow-[inset_0_0_30px_rgba(245,158,11,0.5)]"
+        animate={{ x: [-200, 0, 200], scale: [0.8, 1.1, 0.8] }}
+        transition={{ duration: 2.3, ease: "easeInOut" }}
+      />
+    </motion.div>
+  );
+}
+
+/* ─────────────────────────────────── 5. Ender Dragon Void (Minecraft) ───────────────────────────── */
+export function EnderDragonVoidIntro() {
+  const [active, setActive] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setActive(false), 2600);
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (!active) return null;
+
+  return (
+    <motion.div
+      className="absolute inset-0 z-40 pointer-events-none rounded-2xl overflow-hidden flex items-center justify-center bg-[#0d0714]"
+      initial={{ opacity: 1 }}
+      animate={{ opacity: [1, 1, 0] }}
+      transition={{ duration: 2.6, times: [0, 0.85, 1] }}
+    >
+      <motion.div
+        className="w-64 h-64 rounded-full bg-gradient-to-r from-fuchsia-600 via-purple-700 to-indigo-900 blur-3xl shadow-[0_0_140px_#d946ef]"
+        animate={{ scale: [0, 2.2, 0], opacity: [0, 0.9, 0] }}
+        transition={{ duration: 2.2, ease: "easeInOut" }}
+      />
+      {Array.from({ length: 8 }).map((_, i) => {
+        const angle = (i / 8) * Math.PI * 2;
+        return (
+          <motion.div
+            key={i}
+            className="absolute h-0.5 bg-fuchsia-400 shadow-[0_0_15px_#e879f9]"
+            style={{ width: "100%", transformOrigin: "50% 50%" }}
+            initial={{ rotate: (angle * 180) / Math.PI, scaleX: 0, opacity: 0 }}
+            animate={{ scaleX: [0, 1.4, 0], opacity: [0, 1, 0] }}
+            transition={{ duration: 2, delay: i * 0.08, ease: "easeInOut" }}
+          />
+        );
+      })}
+    </motion.div>
+  );
+}
+
+/* ─────────────────────────────────── 6. Minecraft Steve Sword Slash ───────────────────────────── */
+export function MinecraftSteveSlashIntro() {
+  const [active, setActive] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setActive(false), 2600);
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (!active) return null;
+
+  return (
+    <motion.div
+      className="absolute inset-0 z-40 pointer-events-none rounded-2xl overflow-hidden flex items-center justify-center bg-[#070b14]"
+      initial={{ opacity: 1 }}
+      animate={{ opacity: [1, 1, 0] }}
+      transition={{ duration: 2.6, times: [0, 0.85, 1] }}
+    >
+      <motion.div
+        className="absolute left-2 bottom-0 w-36 h-56 pointer-events-none drop-shadow-[0_0_35px_#38bdf8]"
+        initial={{ x: -220, opacity: 0, scale: 0.8 }}
+        animate={{ x: [-220, 10, 0], opacity: [0, 1, 0], scale: [0.8, 1.1, 0.95] }}
+        transition={{ duration: 1.8, times: [0, 0.4, 1], ease: "easeOut" }}
+      >
+        <img
+          src="https://visage.surgeplay.com/full/384/MHF_Steve"
+          alt="Minecraft Steve Full Body"
+          className="w-full h-full object-contain filter drop-shadow-[0_0_20px_rgba(56,189,248,0.8)]"
+        />
+      </motion.div>
+      <motion.div
+        className="absolute w-[120%] h-3 bg-gradient-to-r from-transparent via-cyan-300 to-transparent shadow-[0_0_30px_#38bdf8]"
+        initial={{ rotate: -45, scaleX: 0, opacity: 0 }}
+        animate={{ rotate: [-45, -20, 10], scaleX: [0, 1.4, 0], opacity: [0, 1, 0] }}
+        transition={{ duration: 1.6, delay: 0.3, ease: "easeInOut" }}
+      />
+    </motion.div>
+  );
+}
+
+/* ─────────────────────────────────── 7. Minecraft Diamond Armor Level Up ───────────────────────────── */
+export function DiamondArmorIntro() {
+  const [active, setActive] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setActive(false), 2600);
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (!active) return null;
+
+  return (
+    <motion.div
+      className="absolute inset-0 z-40 pointer-events-none rounded-2xl overflow-hidden flex flex-col items-center justify-center bg-[#02131d]"
+      initial={{ opacity: 1 }}
+      animate={{ opacity: [1, 1, 0] }}
+      transition={{ duration: 2.6, times: [0, 0.85, 1] }}
+    >
+      <motion.div
+        className="w-48 h-48 rounded-2xl border-4 border-cyan-300 shadow-[0_0_80px_#38bdf8] bg-cyan-400/10"
+        animate={{ scale: [0.2, 1.2, 1], rotate: [0, 90, 0], opacity: [0, 1, 0] }}
+        transition={{ duration: 2.2, ease: "easeInOut" }}
+      />
+    </motion.div>
+  );
+}
+
+/* ─────────────────────────────────── 8. Herobrine Creepypasta Jumpscare ───────────────────────────── */
+export function HerobrineHorrorIntro() {
+  const [active, setActive] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setActive(false), 3000);
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (!active) return null;
+
+  return (
+    <motion.div
+      className="absolute inset-0 z-50 pointer-events-none rounded-2xl overflow-hidden flex flex-col items-center justify-center bg-black"
+      initial={{ opacity: 1 }}
+      animate={{ opacity: [1, 1, 0] }}
+      transition={{ duration: 3, times: [0, 0.9, 1] }}
+    >
+      <motion.div
+        className="absolute inset-0 bg-[#3a0007]"
+        animate={{ opacity: [0.95, 0.2, 0.9, 0.1, 0.95, 0.3, 0] }}
+        transition={{ duration: 2.7, times: [0, 0.1, 0.18, 0.4, 0.48, 0.75, 1] }}
+      />
+      <motion.div
+        className="absolute inset-0 bg-white"
+        animate={{ opacity: [0, 0.95, 0, 1, 0, 0.9, 0] }}
+        transition={{ duration: 2.7, times: [0, 0.12, 0.15, 0.45, 0.48, 0.72, 1] }}
+      />
+      <div 
+        className="absolute inset-0 opacity-40 pointer-events-none"
+        style={{ backgroundImage: "repeating-linear-gradient(0deg, transparent, transparent 2px, #ff0033 2px, #ff0033 4px)", backgroundSize: "100% 4px" }}
+      />
+      <motion.div
+        className="relative flex flex-col items-center justify-center pointer-events-none drop-shadow-[0_0_80px_#ffffff]"
+        initial={{ scale: 0.3, y: 50, opacity: 0 }}
+        animate={{
+          scale: [0.3, 0.9, 1.4, 3.8],
+          y: [50, 20, -10, -30],
+          opacity: [0, 1, 1, 0],
+          x: [0, -8, 8, -12, 12, 0],
+          filter: ["brightness(0.8) contrast(2)", "brightness(1.5) contrast(3)", "brightness(4) contrast(4)", "brightness(10)"]
+        }}
+        transition={{ duration: 2.5, times: [0, 0.3, 0.7, 1] }}
+      >
+        <div className="relative w-[280px] h-[340px] flex items-center justify-center">
+          <img
+            src="https://visage.surgeplay.com/full/512/MHF_Steve"
+            alt="Herobrine Full Body"
+            className="w-full h-full object-contain filter contrast-200 grayscale"
+          />
+          <div className="absolute top-[16%] left-[34%] w-5 h-4 bg-white rounded-sm shadow-[0_0_25px_#ffffff,0_0_50px_#ffffff]" />
+          <div className="absolute top-[16%] right-[34%] w-5 h-4 bg-white rounded-xs shadow-[0_0_25px_#ffffff,0_0_50px_#ffffff]" />
+        </div>
+      </motion.div>
+    </motion.div>
+  );
+}
+
+/* ─────────────────────────────────── 9. Entity 303 Glitch Nightmare ───────────────────────────── */
+export function Entity303GlitchIntro() {
+  const [active, setActive] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setActive(false), 2700);
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (!active) return null;
+
+  return (
+    <motion.div
+      className="absolute inset-0 z-50 pointer-events-none rounded-2xl overflow-hidden flex flex-col items-center justify-center bg-[#050000]"
+      initial={{ opacity: 1 }}
+      animate={{ opacity: [1, 1, 0] }}
+      transition={{ duration: 2.7, times: [0, 0.88, 1] }}
+    >
+      <motion.div
+        className="absolute inset-0 bg-red-600 mix-blend-difference"
+        animate={{ x: [0, -20, 20, -10, 10, 0], opacity: [0, 0.8, 0.2, 0.9, 0] }}
+        transition={{ duration: 1.6, repeat: 1 }}
+      />
+      <motion.div
+        className="absolute inset-0 bg-black opacity-30"
+        style={{ backgroundImage: "repeating-linear-gradient(0deg, transparent, transparent 2px, #ef4444 2px, #ef4444 4px)", backgroundSize: "100% 4px" }}
+        animate={{ opacity: [0.1, 0.7, 0.1] }}
+        transition={{ duration: 1.8 }}
+      />
+      <motion.div
+        className="relative flex flex-col items-center justify-center"
+        initial={{ scale: 0.4, opacity: 0 }}
+        animate={{
+          scale: [0.4, 1.4, 1.1, 3.5],
+          opacity: [0, 1, 1, 0],
+          skewX: [0, -15, 15, 0]
+        }}
+        transition={{ duration: 2.3, times: [0, 0.3, 0.7, 1] }}
+      >
+        <div className="w-36 h-36 relative bg-white/10 border-2 border-red-500 rounded-2xl overflow-hidden shadow-[0_0_60px_#ef4444]">
+          <div className="w-full h-full bg-[#e5e5e5] relative flex items-center justify-center">
+            <div className="w-28 h-28 bg-[#111] rounded-full flex items-center justify-center relative">
+              <div className="w-4 h-4 bg-red-600 rounded-full shadow-[0_0_20px_#dc2626] absolute left-5" />
+              <div className="w-4 h-4 bg-red-600 rounded-full shadow-[0_0_20px_#dc2626] absolute right-5" />
+            </div>
+          </div>
+        </div>
+      </motion.div>
+    </motion.div>
+  );
+}
+
+/* ─────────────────────────────────── 10. Enderman Teleport Jumpscare ───────────────────────────── */
+export function EndermanTeleportIntro() {
+  const [active, setActive] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setActive(false), 2700);
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (!active) return null;
+
+  return (
+    <motion.div
+      className="absolute inset-0 z-50 pointer-events-none rounded-2xl overflow-hidden flex items-center justify-center bg-[#05000c]"
+      initial={{ opacity: 1 }}
+      animate={{ opacity: [1, 1, 0] }}
+      transition={{ duration: 2.7, times: [0, 0.88, 1] }}
+    >
+      {/* Void Space Distortion Ring */}
+      <motion.div
+        className="absolute w-72 h-72 rounded-full border-4 border-fuchsia-500/80 shadow-[0_0_80px_#d946ef] bg-fuchsia-950/20"
+        animate={{ scale: [0.2, 1.8, 0], rotate: [0, 360], opacity: [0, 1, 0] }}
+        transition={{ duration: 2.2, ease: "easeInOut" }}
+      />
+
+      {/* Floating Ender Particles */}
+      {Array.from({ length: 24 }).map((_, i) => (
+        <motion.div
+          key={i}
+          className="absolute w-2 h-2 bg-fuchsia-300 rounded-full shadow-[0_0_12px_#e879f9]"
+          style={{ top: `${(i * 13) % 90}%`, left: `${(i * 17) % 90}%` }}
+          animate={{
+            y: [-30, 30, -30],
+            x: [-20, 20, -20],
+            scale: [0.5, 1.8, 0],
+            opacity: [0, 1, 0],
+          }}
+          transition={{ duration: 1.8, delay: i * 0.05, repeat: 1 }}
+        />
+      ))}
+
+      {/* 3D Enderman Character with Teleport Flash & White Eye Beams */}
+      <motion.div
+        className="relative w-48 h-80 flex items-center justify-center filter drop-shadow-[0_0_70px_#c084fc]"
+        initial={{ opacity: 0, scale: 0.4 }}
+        animate={{
+          opacity: [0, 1, 0.2, 1, 1, 0],
+          x: [-120, 100, -30, 0, 0],
+          scale: [0.4, 1.1, 0.7, 1.5, 0],
+        }}
+        transition={{ duration: 2.4, times: [0, 0.2, 0.4, 0.65, 0.9, 1] }}
+      >
+        <img
+          src="https://visage.surgeplay.com/full/512/MHF_Enderman"
+          alt="Minecraft Enderman"
+          className="w-full h-full object-contain filter contrast-200 brightness-110"
+        />
+        {/* Intense Eye Flares */}
+        <div className="absolute top-[14%] left-[33%] w-5 h-3 bg-fuchsia-200 rounded-sm shadow-[0_0_20px_#f0abfc,0_0_40px_#e879f9]" />
+        <div className="absolute top-[14%] right-[33%] w-5 h-3 bg-fuchsia-200 rounded-sm shadow-[0_0_20px_#f0abfc,0_0_40px_#e879f9]" />
+      </motion.div>
+    </motion.div>
+  );
+}
+
+/* ─────────────────────────────────── 11. Warden Dark Sculk Roar ───────────────────────────── */
+export function WardenRoarIntro() {
+  const [active, setActive] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setActive(false), 2800);
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (!active) return null;
+
+  return (
+    <motion.div
+      className="absolute inset-0 z-50 pointer-events-none rounded-2xl overflow-hidden flex items-center justify-center bg-[#010912]"
+      initial={{ opacity: 1 }}
+      animate={{ opacity: [1, 1, 0] }}
+      transition={{ duration: 2.8, times: [0, 0.88, 1] }}
+    >
+      <motion.div
+        className="absolute inset-0 bg-[#001426]"
+        animate={{ opacity: [1, 0.2, 0.9, 0.1, 0.8, 0] }}
+        transition={{ duration: 2.4, times: [0, 0.2, 0.4, 0.6, 0.8, 1] }}
+      />
+      <motion.div
+        className="w-64 h-64 rounded-full border-8 border-cyan-400 shadow-[0_0_100px_#06b6d4] bg-cyan-500/10"
+        animate={{ scale: [0.1, 3], opacity: [1, 0] }}
+        transition={{ duration: 1.8, ease: "easeOut", delay: 0.3 }}
+      />
+      <motion.div
+        className="relative w-52 h-72 flex items-center justify-center filter drop-shadow-[0_0_60px_#0891b2]"
+        initial={{ y: 150, opacity: 0 }}
+        animate={{
+          y: [150, 0, -20, 0],
+          scale: [0.5, 1.2, 1.4, 0],
+          opacity: [0, 1, 1, 0],
+        }}
+        transition={{ duration: 2.4, times: [0, 0.35, 0.75, 1] }}
+      >
+        <img
+          src="https://visage.surgeplay.com/full/512/MHF_WSkeleton"
+          alt="Warden Sculk Mob"
+          className="w-full h-full object-contain filter hue-rotate-180 brightness-125 contrast-200"
+        />
+      </motion.div>
+    </motion.div>
+  );
+}
+
+/* ─────────────────────────────────── 12. Wither Boss Summon ───────────────────────────── */
+export function WitherBossIntro() {
+  const [active, setActive] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setActive(false), 2700);
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (!active) return null;
+
+  return (
+    <motion.div
+      className="absolute inset-0 z-50 pointer-events-none rounded-2xl overflow-hidden flex items-center justify-center bg-[#070707]"
+      initial={{ opacity: 1 }}
+      animate={{ opacity: [1, 1, 0] }}
+      transition={{ duration: 2.7, times: [0, 0.88, 1] }}
+    >
+      <motion.div
+        className="absolute inset-0 bg-blue-950/60 mix-blend-screen"
+        animate={{ opacity: [0, 0.9, 0, 1, 0] }}
+        transition={{ duration: 2.2, times: [0, 0.3, 0.5, 0.8, 1] }}
+      />
+      <motion.div
+        className="relative w-48 h-72 flex items-center justify-center filter drop-shadow-[0_0_60px_#3b82f6]"
+        initial={{ scale: 0.2, opacity: 0 }}
+        animate={{
+          scale: [0.2, 1.3, 1.6, 0],
+          rotate: [0, -10, 10, 0],
+          opacity: [0, 1, 1, 0],
+        }}
+        transition={{ duration: 2.3, times: [0, 0.3, 0.75, 1] }}
+      >
+        <img
+          src="https://visage.surgeplay.com/full/512/MHF_Wither"
+          alt="Minecraft Wither Boss"
+          className="w-full h-full object-contain filter contrast-200 brightness-110"
+          onError={(e) => {
+            (e.target as HTMLImageElement).src = "https://visage.surgeplay.com/full/512/MHF_WSkeleton";
+          }}
+        />
+      </motion.div>
+    </motion.div>
+  );
+}
+
+/* ─────────────────────────────────── 13. Zombie Horde Ambush ───────────────────────────── */
+export function ZombieHordeIntro() {
+  const [active, setActive] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setActive(false), 2600);
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (!active) return null;
+
+  return (
+    <motion.div
+      className="absolute inset-0 z-50 pointer-events-none rounded-2xl overflow-hidden flex items-center justify-center bg-[#031408]"
+      initial={{ opacity: 1 }}
+      animate={{ opacity: [1, 1, 0] }}
+      transition={{ duration: 2.6, times: [0, 0.88, 1] }}
+    >
+      <motion.div
+        className="absolute inset-0 bg-emerald-950/60 mix-blend-color-dodge"
+        animate={{ opacity: [0.2, 0.8, 0.2] }}
+        transition={{ duration: 2, ease: "easeInOut" }}
+      />
+      <motion.div
+        className="relative w-44 h-64 flex items-center justify-center filter drop-shadow-[0_0_50px_#22c55e]"
+        initial={{ y: 150, opacity: 0 }}
+        animate={{
+          y: [150, 0, -10, 0],
+          scale: [0.6, 1.2, 1.4, 0],
+          opacity: [0, 1, 1, 0],
+        }}
+        transition={{ duration: 2.3, times: [0, 0.35, 0.75, 1] }}
+      >
+        <img
+          src="https://visage.surgeplay.com/full/512/MHF_Zombie"
+          alt="Minecraft Zombie Mob"
+          className="w-full h-full object-contain filter contrast-150"
+        />
+      </motion.div>
+    </motion.div>
+  );
+}
+
+/* ─────────────────────────────────── 14. Skeleton Archer Strike ───────────────────────────── */
+export function SkeletonArcherIntro() {
+  const [active, setActive] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setActive(false), 2600);
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (!active) return null;
+
+  return (
+    <motion.div
+      className="absolute inset-0 z-50 pointer-events-none rounded-2xl overflow-hidden flex items-center justify-center bg-[#0a0d14]"
+      initial={{ opacity: 1 }}
+      animate={{ opacity: [1, 1, 0] }}
+      transition={{ duration: 2.6, times: [0, 0.88, 1] }}
+    >
+      <motion.div
+        className="relative w-44 h-64 flex items-center justify-center filter drop-shadow-[0_0_50px_#94a3b8]"
+        initial={{ x: 180, opacity: 0 }}
+        animate={{
+          x: [180, 0, -10, 0],
+          scale: [0.6, 1.2, 1.3, 0],
+          opacity: [0, 1, 1, 0],
+        }}
+        transition={{ duration: 2.3, times: [0, 0.35, 0.75, 1] }}
+      >
+        <img
+          src="https://visage.surgeplay.com/full/512/MHF_Skeleton"
+          alt="Minecraft Skeleton Mob"
+          className="w-full h-full object-contain filter contrast-150"
+        />
+      </motion.div>
+    </motion.div>
+  );
+}
+
+/* ─────────────────────────────────── CONTINUOUS PARTICLE EFFECTS ───────────────────────────── */
 export function EnchantmentParticles() {
   const RUNES = ["ᔑ", "ʖ", "ᓵ", "↸", "ᒷ", "⎓", "⊣", "⍑", "╎", "⋮", "ꖎ", "ᑑ"];
   return (
     <div className="absolute inset-0 pointer-events-none overflow-hidden" style={{ zIndex: 5 }}>
-      {Array.from({ length: 12 }).map((_, i) => (
+      {Array.from({ length: 14 }).map((_, i) => (
         <motion.div
           key={i}
-          className="absolute font-mono text-[11px] font-bold text-purple-400 drop-shadow-[0_0_6px_rgba(168,85,247,0.8)]"
-          style={{ top: `${15 + (i * 7) % 70}%`, left: `${10 + (i * 13) % 80}%` }}
-          animate={{ y: [-8, -32, -8], x: [-4, 4, -4], opacity: [0, 0.85, 0], scale: [0.8, 1.2, 0.8] }}
-          transition={{ duration: 2.2 + (i % 4) * 0.4, delay: i * 0.25, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute font-mono text-[13px] font-black text-purple-300 drop-shadow-[0_0_8px_rgba(168,85,247,0.9)]"
+          style={{ top: `${10 + (i * 7) % 80}%`, left: `${8 + (i * 13) % 84}%` }}
+          animate={{ y: [-10, -40, -10], x: [-6, 6, -6], opacity: [0, 1, 0], scale: [0.8, 1.3, 0.8] }}
+          transition={{ duration: 2 + (i % 4) * 0.4, delay: i * 0.2, repeat: Infinity, ease: "easeInOut" }}
         >
           {RUNES[i % RUNES.length]}
         </motion.div>
@@ -64,28 +649,27 @@ export function EnchantmentParticles() {
   );
 }
 
-/* ─────────────────────────────────── Fire ───────────────────────────── */
 export function FireParticles() {
   return (
     <div className="absolute inset-0 pointer-events-none overflow-hidden" style={{ zIndex: 5 }}>
-      {Array.from({ length: 15 }).map((_, i) => (
+      {Array.from({ length: 18 }).map((_, i) => (
         <motion.div
           key={i}
-          className="absolute rounded-full bg-orange-500 shadow-[0_0_10px_#f97316]"
+          className="absolute rounded-full bg-amber-500 shadow-[0_0_12px_#f59e0b]"
           style={{
-            width: Math.random() * 6 + 4,
-            height: Math.random() * 6 + 4,
+            width: Math.random() * 8 + 4,
+            height: Math.random() * 8 + 4,
             top: "100%",
             left: `${Math.random() * 100}%`,
           }}
           animate={{
-            y: [0, -100 - Math.random() * 50],
-            x: [0, (Math.random() - 0.5) * 30],
-            opacity: [0, 0.8, 0],
-            scale: [1, 0.5],
+            y: [0, -120 - Math.random() * 60],
+            x: [0, (Math.random() - 0.5) * 40],
+            opacity: [0, 0.9, 0],
+            scale: [1.2, 0.4],
           }}
           transition={{
-            duration: 1.5 + Math.random(),
+            duration: 1.4 + Math.random(),
             delay: Math.random() * 2,
             repeat: Infinity,
             ease: "easeIn",
@@ -96,25 +680,24 @@ export function FireParticles() {
   );
 }
 
-/* ─────────────────────────────────── Cherry Blossom ───────────────────────────── */
 export function CherryBlossomParticles() {
   return (
     <div className="absolute inset-0 pointer-events-none overflow-hidden" style={{ zIndex: 5 }}>
-      {Array.from({ length: 10 }).map((_, i) => (
+      {Array.from({ length: 12 }).map((_, i) => (
         <motion.div
           key={i}
-          className="absolute bg-pink-300 rounded-[50%_0_50%_50%] shadow-[0_0_5px_#fbcfe8]"
+          className="absolute bg-pink-300 rounded-[50%_0_50%_50%] shadow-[0_0_8px_#fbcfe8]"
           style={{
-            width: Math.random() * 8 + 6,
-            height: Math.random() * 8 + 6,
+            width: Math.random() * 10 + 6,
+            height: Math.random() * 10 + 6,
             top: "-10%",
             left: `${Math.random() * 100}%`,
           }}
           animate={{
-            y: [0, 400],
-            x: [0, (Math.random() - 0.5) * 100],
+            y: [0, 450],
+            x: [0, (Math.random() - 0.5) * 120],
             rotate: [0, 360],
-            opacity: [0, 0.9, 0],
+            opacity: [0, 1, 0],
           }}
           transition={{
             duration: 3 + Math.random() * 2,
@@ -128,75 +711,24 @@ export function CherryBlossomParticles() {
   );
 }
 
-/* ─────────────────────────────────── Void Galaxy ───────────────────────────── */
-export function VoidGalaxyIntro() {
-  const [active, setActive] = useState(true);
-
-  useEffect(() => {
-    const timer = setTimeout(() => setActive(false), 2500);
-    return () => clearTimeout(timer);
-  }, []);
-
-  if (!active) return null;
-
-  return (
-    <motion.div
-      className="absolute inset-0 z-40 pointer-events-none overflow-hidden flex items-center justify-center bg-black"
-      initial={{ opacity: 1 }}
-      animate={{ opacity: [1, 1, 0] }}
-      transition={{ duration: 2.5, times: [0, 0.8, 1] }}
-    >
-      {/* Expanding void hole */}
-      <motion.div
-        className="rounded-full bg-purple-900 blur-xl shadow-[0_0_60px_#581c87]"
-        animate={{
-          scale: [0, 4],
-          opacity: [0.8, 0],
-        }}
-        transition={{ duration: 2, ease: "easeOut" }}
-        style={{ width: 100, height: 100 }}
-      />
-      {/* Stars rushing past */}
-      {Array.from({ length: 20 }).map((_, i) => {
-        const angle = (i / 20) * Math.PI * 2;
-        return (
-          <motion.div
-            key={i}
-            className="absolute w-1 h-1 bg-white rounded-full"
-            initial={{ x: 0, y: 0, opacity: 0 }}
-            animate={{
-              x: [0, Math.cos(angle) * 300],
-              y: [0, Math.sin(angle) * 300],
-              opacity: [0, 1, 0],
-              scale: [0.5, 2, 0],
-            }}
-            transition={{ duration: 1.5, ease: "easeIn" }}
-          />
-        );
-      })}
-    </motion.div>
-  );
-}
-
-/* ─────────────────────────────────── Dark Dragon Aura ───────────────────────────── */
 export function DarkDragonAura() {
   return (
     <div className="absolute inset-0 pointer-events-none overflow-hidden" style={{ zIndex: 5 }}>
-      {Array.from({ length: 15 }).map((_, i) => (
+      {Array.from({ length: 16 }).map((_, i) => (
         <motion.div
           key={i}
-          className="absolute bg-purple-900 rounded-full blur-md mix-blend-screen"
+          className="absolute bg-purple-950 rounded-full blur-md mix-blend-screen"
           style={{
-            width: Math.random() * 20 + 10,
-            height: Math.random() * 40 + 20,
+            width: Math.random() * 24 + 12,
+            height: Math.random() * 48 + 24,
             bottom: "-10%",
             left: `${Math.random() * 100}%`,
           }}
           animate={{
-            y: [0, -200 - Math.random() * 100],
-            x: [0, (Math.random() - 0.5) * 60],
-            opacity: [0, 0.4, 0],
-            scale: [1, 1.5],
+            y: [0, -220 - Math.random() * 100],
+            x: [0, (Math.random() - 0.5) * 80],
+            opacity: [0, 0.6, 0],
+            scale: [1, 1.8],
           }}
           transition={{
             duration: 2.5 + Math.random() * 2,
@@ -210,342 +742,23 @@ export function DarkDragonAura() {
   );
 }
 
-/* ─────────────────────────────────── Cyber Glitch ───────────────────────────── */
-export function CyberGlitchIntro() {
-  const [active, setActive] = useState(true);
-
-  useEffect(() => {
-    const timer = setTimeout(() => setActive(false), 2000);
-    return () => clearTimeout(timer);
-  }, []);
-
-  if (!active) return null;
-
+export function ElectricParticles() {
   return (
-    <motion.div
-      className="absolute inset-0 z-40 pointer-events-none overflow-hidden bg-black rounded-lg"
-      initial={{ opacity: 1 }}
-      animate={{ opacity: [1, 1, 0] }}
-      transition={{ duration: 2, times: [0, 0.85, 1] }}
-    >
-      {/* Glitch layers */}
-      <motion.div
-        className="absolute inset-0 bg-red-500 mix-blend-screen opacity-50"
-        animate={{ x: [0, -10, 10, -5, 5, 0], opacity: [0.5, 0.8, 0.2, 0.9, 0] }}
-        transition={{ duration: 1.5, repeat: Infinity, repeatType: "mirror" }}
-      />
-      <motion.div
-        className="absolute inset-0 bg-blue-500 mix-blend-screen opacity-50"
-        animate={{ x: [0, 10, -10, 5, -5, 0], opacity: [0.5, 0.2, 0.8, 0.3, 0] }}
-        transition={{ duration: 1.3, repeat: Infinity, repeatType: "mirror" }}
-      />
-      
-      {/* Scanline / Static */}
-      <motion.div
-        className="absolute inset-0 bg-white opacity-20"
-        animate={{
-          backgroundPosition: ["0px 0px", "0px 100px", "0px 200px"],
-          opacity: [0, 0.8, 0, 1, 0, 0.5, 0]
-        }}
-        style={{ backgroundImage: "repeating-linear-gradient(0deg, transparent, transparent 2px, #fff 2px, #fff 4px)", backgroundSize: "100% 4px" }}
-        transition={{ duration: 1.8 }}
-      />
-      
-      {/* Center text */}
-      <motion.div
-        className="absolute inset-0 flex items-center justify-center font-mono font-black text-3xl text-white mix-blend-difference"
-        animate={{ scale: [1, 1.2, 0.9, 1.5, 0], opacity: [0, 1, 0, 1, 0], skewX: [0, -20, 20, 0] }}
-        transition={{ duration: 1.8, times: [0, 0.2, 0.4, 0.6, 1] }}
-      >
-        SYSTEM OVERRIDE
-      </motion.div>
-    </motion.div>
-  );
-}
-
-/* ─────────────────────────────────── Shattered Glass ───────────────────────────── */
-export function ShatteredGlassIntro() {
-  const [active, setActive] = useState(true);
-
-  useEffect(() => {
-    const timer = setTimeout(() => setActive(false), 2200);
-    return () => clearTimeout(timer);
-  }, []);
-
-  if (!active) return null;
-
-  return (
-    <motion.div
-      className="absolute inset-0 z-40 pointer-events-none overflow-hidden flex items-center justify-center bg-black rounded-lg"
-      style={{ perspective: "1000px" }}
-      initial={{ opacity: 1 }}
-      animate={{ opacity: [1, 1, 0] }}
-      transition={{ duration: 2.2, times: [0, 0.85, 1] }}
-    >
-      {/* Glass shards */}
-      {Array.from({ length: 12 }).map((_, i) => (
+    <div className="absolute inset-0 pointer-events-none overflow-hidden" style={{ zIndex: 5 }}>
+      {Array.from({ length: 14 }).map((_, i) => (
         <motion.div
           key={i}
-          className="absolute bg-white/20 backdrop-blur-md"
-          style={{
-            width: Math.random() * 100 + 100, height: Math.random() * 100 + 100,
-            clipPath: "polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%)",
-            border: "1px solid rgba(255,255,255,0.4)",
-            transformStyle: "preserve-3d"
-          }}
-          initial={{ scale: 1, x: 0, y: 0, rotateX: 0, rotateY: 0, rotateZ: 0, z: 0 }}
+          className="absolute w-1.5 h-1.5 bg-yellow-300 rounded-full shadow-[0_0_8px_#facc15]"
+          style={{ top: `${Math.random() * 100}%`, left: `${Math.random() * 100}%` }}
           animate={{
-            scale: [1, 1, 0],
-            x: (Math.random() - 0.5) * 800,
-            y: (Math.random() - 0.5) * 800,
-            z: Math.random() * 1000 + 500, // Fly towards camera in Z space
-            rotateX: (Math.random() - 0.5) * 720,
-            rotateY: (Math.random() - 0.5) * 720,
-            rotateZ: (Math.random() - 0.5) * 360,
-            opacity: [1, 0]
-          }}
-          transition={{ duration: 1.8, delay: 0.2, ease: "easeIn" }}
-        />
-      ))}
-      <motion.div
-        className="absolute inset-0 bg-white"
-        animate={{ opacity: [0, 1, 0] }}
-        transition={{ duration: 0.5, times: [0, 0.6, 1] }}
-      />
-    </motion.div>
-  );
-}
-
-/* ─────────────────────────────────── Holy Light ───────────────────────────── */
-export function HolyLightIntro() {
-  const [active, setActive] = useState(true);
-
-  useEffect(() => {
-    const timer = setTimeout(() => setActive(false), 2800);
-    return () => clearTimeout(timer);
-  }, []);
-
-  if (!active) return null;
-
-  return (
-    <motion.div
-      className="absolute inset-0 z-40 pointer-events-none overflow-hidden flex items-center justify-center rounded-lg"
-      style={{ perspective: "800px" }}
-      initial={{ opacity: 1 }}
-      animate={{ opacity: [1, 1, 0] }}
-      transition={{ duration: 2.8, times: [0, 0.8, 1] }}
-    >
-      {/* Dark background fading */}
-      <motion.div
-        className="absolute inset-0 bg-amber-950"
-        animate={{ opacity: [1, 0] }}
-        transition={{ duration: 2 }}
-      />
-      {/* Giant 3D light beam */}
-      <motion.div
-        className="absolute w-full bg-gradient-to-b from-yellow-200 to-transparent origin-top"
-        style={{ height: "200%", top: "-50%", transformStyle: "preserve-3d" }}
-        animate={{
-          scaleX: [0, 1.5, 2],
-          rotateX: [-30, 0, 30],
-          opacity: [0, 1, 0],
-          y: [-100, 0, 100],
-          z: [-200, 0, 200]
-        }}
-        transition={{ duration: 2.2, ease: "easeInOut" }}
-      />
-      {/* Floating holy particles in 3D */}
-      {Array.from({ length: 25 }).map((_, i) => (
-        <motion.div
-          key={i}
-          className="absolute w-2 h-2 rounded-full bg-yellow-100 shadow-[0_0_15px_#fde047]"
-          initial={{ x: (Math.random() - 0.5) * 300, y: Math.random() * 400 + 100, z: -200, opacity: 0 }}
-          animate={{
-            y: -200,
-            z: [ -200, Math.random() * 400 + 200, 500 ],
+            x: [0, (Math.random() - 0.5) * 40],
+            y: [0, (Math.random() - 0.5) * 40],
             opacity: [0, 1, 0],
-            scale: [0.5, 2, 0.5]
+            scale: [0.5, 1.5, 0.5],
           }}
-          transition={{ duration: 2, delay: Math.random() }}
+          transition={{ duration: 0.8 + Math.random() * 0.8, repeat: Infinity, ease: "easeInOut" }}
         />
       ))}
-    </motion.div>
-  );
-}
-
-/* ─────────────────────────────────── Creeper Blast ───────────────────────────── */
-export function CreeperBlastIntro() {
-  const [active, setActive] = useState(true);
-
-  useEffect(() => {
-    const timer = setTimeout(() => setActive(false), 2400);
-    return () => clearTimeout(timer);
-  }, []);
-
-  if (!active) return null;
-
-  return (
-    <motion.div
-      className="absolute inset-0 z-50 pointer-events-none flex items-center justify-center bg-black/90 rounded-lg overflow-hidden"
-      style={{ perspective: "1000px" }}
-      initial={{ opacity: 1 }}
-      animate={{ opacity: [1, 1, 0] }}
-      transition={{ duration: 2.4, times: [0, 0.85, 1] }}
-    >
-      {/* 3D Creeper Face mapped from creeper.png */}
-      <motion.div
-        className="relative flex flex-col items-center justify-center"
-        style={{ transformStyle: "preserve-3d" }}
-        initial={{ scale: 0, opacity: 0, z: -500, rotateY: -180, rotateX: 45 }}
-        animate={{ 
-          scale: [0, 1, 1, 1.2, 3],
-          z: [-500, 0, 200, 400, 600],
-          rotateY: [-180, 0, 10, -10, 0],
-          rotateX: [45, 0, -10, 10, 0],
-          opacity: [0, 1, 1, 1, 0],
-          filter: ["brightness(1)", "brightness(1)", "brightness(1.5)", "brightness(5)", "brightness(10)"]
-        }}
-        transition={{ duration: 1.8, times: [0, 0.4, 0.6, 0.8, 1] }}
-      >
-        {/* The 3D Creeper Head uses the 64x32 creeper.png skin. 
-            Face is 8x8. We want face to be 96x96 (12x scale).
-            Background size = 768px 384px. */}
-        {/* Front */}
-        <div className="w-24 h-24 absolute image-rendering-pixelated shadow-[inset_0_0_20px_rgba(0,0,0,0.5)]"
-             style={{ backgroundImage: "url('/textures/creeper.png')", backgroundSize: "768px 384px", backgroundPosition: "-96px -96px", transform: "translateZ(48px)" }}></div>
-        {/* Back */}
-        <div className="w-24 h-24 absolute image-rendering-pixelated"
-             style={{ backgroundImage: "url('/textures/creeper.png')", backgroundSize: "768px 384px", backgroundPosition: "-288px -96px", transform: "rotateY(180deg) translateZ(48px)" }}></div>
-        {/* Right */}
-        <div className="w-24 h-24 absolute image-rendering-pixelated"
-             style={{ backgroundImage: "url('/textures/creeper.png')", backgroundSize: "768px 384px", backgroundPosition: "0px -96px", transform: "rotateY(90deg) translateZ(48px)" }}></div>
-        {/* Left */}
-        <div className="w-24 h-24 absolute image-rendering-pixelated"
-             style={{ backgroundImage: "url('/textures/creeper.png')", backgroundSize: "768px 384px", backgroundPosition: "-192px -96px", transform: "rotateY(-90deg) translateZ(48px)" }}></div>
-        {/* Top */}
-        <div className="w-24 h-24 absolute image-rendering-pixelated"
-             style={{ backgroundImage: "url('/textures/creeper.png')", backgroundSize: "768px 384px", backgroundPosition: "-96px 0px", transform: "rotateX(90deg) translateZ(48px)" }}></div>
-        {/* Bottom */}
-        <div className="w-24 h-24 absolute image-rendering-pixelated"
-             style={{ backgroundImage: "url('/textures/creeper.png')", backgroundSize: "768px 384px", backgroundPosition: "-192px 0px", transform: "rotateX(-90deg) translateZ(48px)" }}></div>
-      </motion.div>
-
-      {/* 3D Explosion Particles */}
-      {Array.from({ length: 40 }).map((_, i) => (
-        <motion.div
-          key={i}
-          className="absolute bg-orange-500 w-4 h-4 image-rendering-pixelated"
-          style={{ transformStyle: "preserve-3d" }}
-          initial={{ opacity: 0, x: 0, y: 0, z: 0, scale: 0 }}
-          animate={{
-            opacity: [0, 0, 1, 0],
-            x: (Math.random() - 0.5) * 800,
-            y: (Math.random() - 0.5) * 800,
-            z: (Math.random() - 0.5) * 600 + 200,
-            rotateX: Math.random() * 720,
-            rotateY: Math.random() * 720,
-            scale: [0, 0, Math.random() * 3 + 1, 0],
-            backgroundColor: Math.random() > 0.5 ? "#f97316" : "#ef4444"
-          }}
-          transition={{ duration: 2.4, times: [0, 0.75, 0.8, 1], ease: "easeOut" }}
-        />
-      ))}
-      
-      {/* Explosion Flash */}
-      <motion.div
-        className="absolute inset-0 bg-white"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: [0, 0, 1, 0] }}
-        transition={{ duration: 2.4, times: [0, 0.75, 0.8, 1] }}
-      />
-    </motion.div>
-  );
-}
-
-/* ─────────────────────────────────── TNT Pop ───────────────────────────── */
-export function TntPopIntro() {
-  const [active, setActive] = useState(true);
-
-  useEffect(() => {
-    const timer = setTimeout(() => setActive(false), 2400);
-    return () => clearTimeout(timer);
-  }, []);
-
-  if (!active) return null;
-
-  return (
-    <motion.div
-      className="absolute inset-0 z-50 pointer-events-none flex flex-col items-center justify-center bg-black/90 rounded-lg overflow-hidden"
-      style={{ perspective: "1000px" }}
-      initial={{ opacity: 1 }}
-      animate={{ opacity: [1, 1, 0] }}
-      transition={{ duration: 2.4, times: [0, 0.85, 1] }}
-    >
-      {/* 3D TNT Cube falling in */}
-      <motion.div
-        className="relative w-24 h-24 image-rendering-pixelated"
-        style={{ transformStyle: "preserve-3d" }}
-        initial={{ y: -400, z: -200, rotateX: 45, rotateY: 45, rotateZ: 0 }}
-        animate={{ 
-          y: [-400, 0, -50, 0, 0], 
-          z: [-200, 0, 100, 200, 400],
-          rotateX: [45, 360, 400, 450, 450],
-          rotateY: [45, 360, 400, 450, 450],
-          rotateZ: [0, 180, 360, 360, 360],
-          scale: [1, 1, 1, 1.2, 3],
-          opacity: [1, 1, 1, 1, 0],
-          filter: ["brightness(1)", "brightness(1)", "brightness(2)", "brightness(5)", "brightness(10)"]
-        }}
-        transition={{ duration: 1.8, times: [0, 0.4, 0.5, 0.7, 1] }}
-      >
-        {/* Front */}
-        <div className="absolute w-24 h-24 bg-cover image-rendering-pixelated shadow-[inset_0_0_15px_rgba(0,0,0,0.5)]" 
-             style={{ backgroundImage: "url('/textures/tnt_side.png')", transform: "translateZ(48px)" }}></div>
-        {/* Back */}
-        <div className="absolute w-24 h-24 bg-cover image-rendering-pixelated shadow-[inset_0_0_15px_rgba(0,0,0,0.5)]" 
-             style={{ backgroundImage: "url('/textures/tnt_side.png')", transform: "rotateY(180deg) translateZ(48px)" }}></div>
-        {/* Right */}
-        <div className="absolute w-24 h-24 bg-cover image-rendering-pixelated shadow-[inset_0_0_15px_rgba(0,0,0,0.5)]" 
-             style={{ backgroundImage: "url('/textures/tnt_side.png')", transform: "rotateY(90deg) translateZ(48px)" }}></div>
-        {/* Left */}
-        <div className="absolute w-24 h-24 bg-cover image-rendering-pixelated shadow-[inset_0_0_15px_rgba(0,0,0,0.5)]" 
-             style={{ backgroundImage: "url('/textures/tnt_side.png')", transform: "rotateY(-90deg) translateZ(48px)" }}></div>
-        {/* Top */}
-        <div className="absolute w-24 h-24 bg-cover image-rendering-pixelated shadow-[inset_0_0_15px_rgba(0,0,0,0.5)]" 
-             style={{ backgroundImage: "url('/textures/tnt_top.png')", transform: "rotateX(90deg) translateZ(48px)" }}></div>
-        {/* Bottom */}
-        <div className="absolute w-24 h-24 bg-cover image-rendering-pixelated shadow-[inset_0_0_15px_rgba(0,0,0,0.5)]" 
-             style={{ backgroundImage: "url('/textures/tnt_bottom.png')", transform: "rotateX(-90deg) translateZ(48px)" }}></div>
-      </motion.div>
-
-      {/* 3D Explosion Particles */}
-      {Array.from({ length: 60 }).map((_, i) => (
-        <motion.div
-          key={i}
-          className="absolute bg-white w-4 h-4 image-rendering-pixelated"
-          style={{ transformStyle: "preserve-3d" }}
-          initial={{ opacity: 0, x: 0, y: 0, z: 0, scale: 0 }}
-          animate={{
-            opacity: [0, 0, 1, 0],
-            x: (Math.random() - 0.5) * 1000,
-            y: (Math.random() - 0.5) * 1000,
-            z: (Math.random() - 0.5) * 800 + 300, // explode outwards and towards camera
-            rotateX: Math.random() * 720,
-            rotateY: Math.random() * 720,
-            scale: [0, 0, Math.random() * 4 + 1, 0],
-            backgroundColor: Math.random() > 0.6 ? "#ffffff" : (Math.random() > 0.3 ? "#ef4444" : "#f97316")
-          }}
-          transition={{ duration: 2.4, times: [0, 0.75, 0.8, 1], ease: "easeOut" }}
-        />
-      ))}
-      
-      {/* Explosion Flash */}
-      <motion.div
-        className="absolute inset-0 bg-orange-100"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: [0, 0, 1, 0] }}
-        transition={{ duration: 2.4, times: [0, 0.75, 0.8, 1] }}
-      />
-    </motion.div>
+    </div>
   );
 }

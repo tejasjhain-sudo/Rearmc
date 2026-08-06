@@ -11,6 +11,8 @@ export default async function AdminPage() {
 
   const initialSettings = await fetchSettings();
   const initialTiers = await fetchTiers();
+  const { fetchProfiles } = await import("./data-actions");
+  const initialProfiles = await fetchProfiles();
 
-  return <AdminDashboard initialSettings={initialSettings} initialTiers={initialTiers} />;
+  return <AdminDashboard initialSettings={initialSettings} initialTiers={initialTiers} initialProfiles={initialProfiles} />;
 }

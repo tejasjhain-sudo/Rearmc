@@ -29,30 +29,41 @@ export interface GalleryImage {
   title: string;
 }
 
-export interface SiteSettings {
-  discordUrl: string;
-  gallery: GalleryImage[];
-  reviews: Review[];
+export interface FeatureItem {
+  id: string;
+  title: string;
+  description: string;
+  icon?: string;
 }
 
-export interface ProfileCustomization {
-  cardEffect?: string;
-  introEffect?: string;
-  badgeIcon?: string;
-  titleBanner?: string;
-  updatedAt?: number;
-  particles?: string;
-  tag?: string;
-  tagColor?: string;
-  cardTheme?: string;
-  cardLayout?: string;
-  musicUrl?: string;
-  musicName?: string;
+export interface SiteSettings {
+  serverIp: string;
+  serverPort: string;
+  heroBadgeText: string;
+  heroHeadline: string;
+  heroSubtitle: string;
+  announcementText: string;
+  announcementActive: boolean;
+  discordUrl: string;
+  storeUrl: string;
+  youtubeUrl: string;
+  gallery: GalleryImage[];
+  reviews: Review[];
+  features: FeatureItem[];
 }
 
 // Default initial state
 const DEFAULT_SETTINGS: SiteSettings = {
+  serverIp: "play.rearmc.in",
+  serverPort: "25565",
+  heroBadgeText: "🔥 INDIA'S #1 COMPETITIVE MC PVP SERVER",
+  heroHeadline: "DOMINATE THE RANKED PVP ARENA",
+  heroSubtitle: "Compete against top Indian PvP warriors with ultra-low latency, custom knockback, ranked matchmaking, and professional tier testing.",
+  announcementText: "🎉 SEASON 2 PVP TOURNAMENT IS LIVE! SIGN UP NOW ON DISCORD!",
+  announcementActive: true,
   discordUrl: "https://discord.gg/p7ENwb6Pz7",
+  storeUrl: "https://store.rearmc.in",
+  youtubeUrl: "https://youtube.com/@rearmcpvp",
   gallery: [
     { id: "1", src: "/banner.jpg", title: "PvP Arena" },
     { id: "2", src: "https://images.wallpapersden.com/image/download/minecraft-4k-game_bGhnZmyUmZqaraWkpJRmbmdlrWZnZWU.jpg", title: "Spawn" },
@@ -61,6 +72,11 @@ const DEFAULT_SETTINGS: SiteSettings = {
   reviews: [
     { id: "1", url: "https://youtu.be/1PslYC-DTDA", reviewer: "Rajesh", title: "RearMC Server Review" },
     { id: "2", url: "https://www.youtube.com/watch?v=rOdJc6Bv3V4", reviewer: "RearMC PvP", title: "RearMC Gameplay Showcase" }
+  ],
+  features: [
+    { id: "1", title: "Ultra-Low Latency", description: "Hosted in Mumbai datacenters for 10-25ms ping across India.", icon: "Zap" },
+    { id: "2", title: "Custom Knockback Engine", description: "Optimized 1.8 & 1.20 hit detection and smooth knockback physics.", icon: "Shield" },
+    { id: "3", title: "Ranked Tier Testing", description: "Official HT1 to LT5 ranking leaderboard verified by staff.", icon: "Trophy" }
   ]
 };
 

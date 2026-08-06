@@ -4,10 +4,16 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
 export async function login(password: string) {
-  // Use env var or default to "admin" if not set for local testing
-  const validPassword = process.env.ADMIN_PASSWORD || "admin";
+  const envPassword = process.env.ADMIN_PASSWORD;
+  const input = (password || "").trim();
   
-  if (password === validPassword) {
+  // Allow env variable password, Tejas321@, or admin fallback
+  const isValid = 
+    (envPassword && input === envPassword.trim()) ||
+    input === "Tejas321@" ||
+    input === "admin";
+
+  if (isValid) {
     const cookieStore = await cookies();
     cookieStore.set("admin_session", "authenticated", {
       httpOnly: true,

@@ -16,25 +16,34 @@ export default function Hero() {
     tps: 0,
     loading: true
   });
+  const [serverIp, setServerIp] = useState("play.rearmc.in");
   const [discordUrl, setDiscordUrl] = useState("https://discord.gg/p7ENwb6Pz7");
 
   const copyIp = () => {
-    navigator.clipboard.writeText("play.rearmc.fun");
+    navigator.clipboard.writeText(serverIp);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
 
   useEffect(() => {
+    // Fetch Settings
+    fetch("/api/settings").then(res => res.json()).then(data => {
+      if (data.discordUrl) setDiscordUrl(data.discordUrl);
+      if (data.serverIp) setServerIp(data.serverIp);
+    }).catch(console.error);
+  }, []);
+
+  useEffect(() => {
     const fetchServerData = async () => {
       try {
-        const res = await fetch("https://api.mcsrvstat.us/3/play.rearmc.fun");
+        const res = await fetch(`https://api.mcsrvstat.us/3/${serverIp}`);
         const data = await res.json();
         
         if (data.online) {
           setServerData({
             online: true,
             players: data.players?.online || 0,
-            ping: data.debug?.ping ? 24 : 24, // Ping usually isn't provided directly so we leave it static
+            ping: 24,
             tps: 20.0, 
             loading: false
           });
@@ -59,15 +68,9 @@ export default function Hero() {
     };
 
     fetchServerData();
-    const interval = setInterval(fetchServerData, 60000); // Update every minute
-    
-    // Fetch Settings for Discord link
-    fetch("/api/settings").then(res => res.json()).then(data => {
-      if (data.discordUrl) setDiscordUrl(data.discordUrl);
-    }).catch(console.error);
-
+    const interval = setInterval(fetchServerData, 60000);
     return () => clearInterval(interval);
-  }, []);
+  }, [serverIp]);
 
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20">
@@ -131,7 +134,7 @@ export default function Hero() {
               <Play fill="currentColor" size={20} className="drop-shadow-md" />
               <div className="flex flex-col items-start leading-none drop-shadow-md">
                 <span className="text-[10px] font-black text-white/90 uppercase tracking-widest">Play Now</span>
-                <span className="font-mono text-lg tracking-tight">{copied ? "COPIED!" : "play.rearmc.fun"}</span>
+                <span className="font-mono text-lg tracking-tight">{copied ? "COPIED!" : serverIp}</span>
               </div>
               {copied ? <CheckCircle2 className="absolute right-5 drop-shadow-md" size={20} /> : <Copy className="absolute right-5 opacity-0 transition-all duration-300 group-hover:opacity-100 group-hover:right-4 drop-shadow-md" size={20} />}
             </button>

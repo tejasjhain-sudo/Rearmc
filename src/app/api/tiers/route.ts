@@ -35,24 +35,31 @@ async function fetchAllPlayers() {
 
 export async function GET() {
   try {
-    const [players, profiles] = await Promise.all([
+    const { getTiers } = await import("@/lib/kv");
+    const [players, profiles, kvTiers] = await Promise.all([
       fetchAllPlayers(),
-      getProfiles()
+      getProfiles(),
+      getTiers(),
     ]);
 
     // Transform to Record<username, { tiers, region, profile }>
     const mappedData: Record<string, any> = {};
+    
+    // First map external players API data
     players.forEach((player: any) => {
       if (player.minecraftUsername) {
         const username = player.minecraftUsername;
         const playerTiers = { ...player.tiers };
         
-        // Example hardcoded override
+        // Merge with local KV overrides if any
+        if (kvTiers[username]) {
+          Object.assign(playerTiers, kvTiers[username]);
+        }
+
         if (username.toLowerCase() === "shadowgenz" && playerTiers.sword === "LT1") {
           playerTiers.sword = "LT5";
         }
 
-        // Check if there is a profile for this user (case-insensitive key match if needed, but here exact for simplicity, or we can check lowercased)
         const profile = profiles[username] || profiles[username.toLowerCase()] || {};
 
         mappedData[username] = {
@@ -60,6 +67,20 @@ export async function GET() {
           region: player.region ?? "AS",
           profile: profile
         };
+      }
+    });
+
+    // Also include manually added admin players in KV that aren't in external API
+    Object.keys(kvTiers).forEach((username) => {
+      if (!mappedData[username]) {
+        mappedData[username] = {
+          tiers: kvTiers[username],
+          region: "AS",
+          profile: profiles[username] || profiles[username.toLowerCase()] || {}
+        };
+      } else {
+        // Ensure kvTiers override external API data for existing players
+        Object.assign(mappedData[username].tiers, kvTiers[username]);
       }
     });
 

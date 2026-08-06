@@ -36,6 +36,29 @@ export interface FeatureItem {
   icon?: string;
 }
 
+export interface PlayerPermissions {
+  allowedIntroEffects?: string[];
+  allowedCardThemes?: string[];
+  allowedParticles?: string[];
+  canUseCustomMusic?: boolean;
+}
+
+export interface ProfileCustomization {
+  cardEffect?: string;
+  introEffect?: string;
+  badgeIcon?: string;
+  titleBanner?: string;
+  updatedAt?: number;
+  particles?: string;
+  tag?: string;
+  tagColor?: string;
+  cardTheme?: string;
+  cardLayout?: string;
+  musicUrl?: string;
+  musicName?: string;
+  permissions?: PlayerPermissions;
+}
+
 export interface SiteSettings {
   serverIp: string;
   serverPort: string;

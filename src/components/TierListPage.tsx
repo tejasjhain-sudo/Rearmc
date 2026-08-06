@@ -331,13 +331,20 @@ const ProfileCard = forwardRef<HTMLDivElement, {
   const [lyrics, setLyrics] = useState("");
   const audioRef = useRef<HTMLAudioElement>(null);
 
-  // Auto-play music on open
+  // Auto-play & change music dynamically on update
   useEffect(() => {
     const audio = audioRef.current;
-    let isMounted = true;
+    if (!audio) return;
     
-    if (audio && profile?.musicUrl) {
+    let isMounted = true;
+
+    if (profile?.musicUrl) {
+      audio.pause();
+      audio.currentTime = 0;
+      audio.src = profile.musicUrl;
+      audio.load();
       audio.volume = 0.4;
+      
       const playPromise = audio.play();
       if (playPromise !== undefined) {
         playPromise.then(() => {
@@ -349,6 +356,9 @@ const ProfileCard = forwardRef<HTMLDivElement, {
           console.warn("Autoplay blocked or interrupted.", error);
         });
       }
+    } else {
+      audio.pause();
+      audio.currentTime = 0;
     }
     
     return () => {
@@ -571,9 +581,7 @@ const ProfileCard = forwardRef<HTMLDivElement, {
           <div className="absolute inset-0 rounded-2xl pointer-events-none" style={{ boxShadow: "inset 0 0 100px rgba(255,255,255,0.02)" }} />
         {/* Hidden Audio Element */}
         {profile?.musicUrl && (
-          <audio ref={audioRef} loop muted={isMuted} preload="auto">
-            <source src={profile.musicUrl} type="audio/mpeg" />
-          </audio>
+          <audio ref={audioRef} src={profile.musicUrl} loop muted={isMuted} preload="auto" />
         )}
 
         {/* Intro Animation */}

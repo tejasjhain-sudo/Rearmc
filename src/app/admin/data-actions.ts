@@ -31,7 +31,7 @@ export async function fetchTiers() {
     let totalPages = 1;
 
     do {
-      const response = await fetch(`http://wings.sprintmc.fun:7020/api/players?limit=100&page=${page}`, {
+      const response = await fetch(`http://wings.desact.in:2000/api/players?limit=100&page=${page}`, {
         cache: "no-store"
       });
       if (!response.ok) break;
